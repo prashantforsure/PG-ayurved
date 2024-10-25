@@ -91,6 +91,8 @@ model Lesson {
   id        String   @id @default(cuid())
   title     String
   content   String
+  startDate   DateTime
+  endDate     DateTime
   order     Int
   courseId  String
   course    Course   @relation(fields: [courseId], references: [id])
