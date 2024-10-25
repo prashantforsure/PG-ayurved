@@ -46,7 +46,6 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    // Define the orderBy clause separately with proper typing
     const lessonOrderBy: Prisma.LessonOrderByWithRelationInput = {
       startDate: 'asc',
     };
