@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -77,6 +78,7 @@ model Course {
   category    Category @relation(fields: [categoryId], references: [id])
   enrollments Enrollment[]
   lessons     Lesson[]
+  payments    Payment[]
 }
 
 model Category {
@@ -91,8 +93,8 @@ model Lesson {
   id        String   @id @default(cuid())
   title     String
   content   String
-  startDate   DateTime
-  endDate     DateTime
+  startDate DateTime
+  endDate   DateTime
   order     Int
   courseId  String
   course    Course   @relation(fields: [courseId], references: [id])
@@ -101,44 +103,46 @@ model Lesson {
 }
 
 model Enrollment {
-  id        String   @id @default(cuid())
-  userId    String
-  courseId  String
+  id         String   @id @default(cuid())
+  userId     String
+  courseId   String
   enrolledAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  course    Course   @relation(fields: [courseId], references: [id])
-  payment   Payment?
+  user       User     @relation(fields: [userId], references: [id])
+  course     Course   @relation(fields: [courseId], references: [id])
+  payment    Payment?
 
   @@unique([userId, courseId])
 }
 
 model Payment {
-  id            String   @id @default(cuid())
-  amount        Float
-  currency      String
-  status        String
-  paymentMethod String
-  razorpayPaymentId String?
-  razorpayOrderId String?
-  razorpaySignature String?
-  userId        String
-  enrollmentId  String   @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  user          User     @relation(fields: [userId], references: [id])
-  enrollment    Enrollment @relation(fields: [enrollmentId], references: [id])
-  invoice       Invoice?
+  id                 String   @id @default(cuid())
+  amount             Float
+  currency           String
+  status             String
+  paymentMethod      String
+  razorpayPaymentId  String?
+  razorpayOrderId    String?  @unique
+  razorpaySignature  String?
+  userId             String
+  courseId           String
+  enrollmentId       String   @unique
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id])
+  course             Course   @relation(fields: [courseId], references: [id])
+  enrollment         Enrollment @relation(fields: [enrollmentId], references: [id])
+  invoice            Invoice?
 }
 
 model Invoice {
-  id        String   @id @default(cuid())
-  invoiceNumber String @unique
-  userId    String
-  paymentId String   @unique
-  amount    Float
-  status    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  payment   Payment  @relation(fields: [paymentId], references: [id])
+  id             String   @id @default(cuid())
+  invoiceNumber  String   @unique
+  userId         String
+  paymentId      String   @unique
+  amount         Float
+  status         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id])
+  payment        Payment  @relation(fields: [paymentId], references: [id])
 }
