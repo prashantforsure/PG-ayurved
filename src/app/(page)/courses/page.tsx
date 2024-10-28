@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { toast } from '@/hooks/use-toast'
 
 // Define types
 interface Course {
@@ -63,7 +64,11 @@ export default function CourseCatalogPage() {
       setTotalPages(response.data.totalPages)
     } catch (error) {
       console.error('Failed to fetch courses:', error)
-      // Handle error (e.g., show error message)
+      toast({
+        title: "Error",
+        description: "Failed to load group details. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 

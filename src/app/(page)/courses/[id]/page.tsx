@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import axios from 'axios'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { toast } from '@/hooks/use-toast'
 
 // Define types
 interface Course {
@@ -47,7 +48,7 @@ export default function CourseDetailsPage({ params }: { params: { id: string } }
       setCourse(response.data)
     } catch (error) {
       console.error('Failed to fetch course details:', error)
-      // Handle error (e.g., show error message)
+      
       toast({
         title: "Error",
         description: "Failed to load group details. Please try again.",
@@ -62,7 +63,11 @@ export default function CourseDetailsPage({ params }: { params: { id: string } }
       setLessons(response.data)
     } catch (error) {
       console.error('Failed to fetch lessons:', error)
-      // Handle error (e.g., show error message)
+      toast({
+        title: "Error",
+        description: "Failed to load group details. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 
