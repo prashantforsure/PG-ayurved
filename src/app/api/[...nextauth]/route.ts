@@ -25,17 +25,38 @@ export const authOptions: AuthOptions = {
     async signIn({ user, account, profile }) {
       if (!profile?.email) return false
 
-      const userCount = await prisma.user.count()
-      if (userCount === 0) {
-        // First user becomes an admin
-        await prisma.user.update({
+      try {
+        const existingUser = await prisma.user.findUnique({
           where: { email: profile.email },
-          data: { isAdmin: true },
         })
+
+        if (!existingUser) {
+          const userCount = await prisma.user.count()
+          const newUser = await prisma.user.create({
+            data: {
+              email: profile.email,
+              name: profile.name,
+              image: profile.image,
+              isAdmin: userCount === 0, // First user becomes an admin
+            },
+          })
+          return true
+        }
+
+        return true
+      } catch (error) {
+        console.error("Error during sign in:", error)
+        return false
       }
-      return true
+    },
+    redirect() {
+      return '/'
     },
   },
+  pages: {
+    signIn: '/auth/signin',
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 }
 
 const handler = NextAuth(authOptions)

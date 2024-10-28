@@ -2,9 +2,10 @@
 
 import { signIn } from 'next-auth/react'
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/ui/icons"
+
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Icons } from '@/components/ui/icons'
 
 export default function SignInPage() {
   return (
