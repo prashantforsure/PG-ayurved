@@ -88,6 +88,11 @@ export default function CourseDetailsPage({ params }: { params: { id: string } }
     } catch (error) {
       console.error('Failed to enroll:', error)
       // Handle error (e.g., show error message)
+      toast({
+        title: "Error",
+        description: "not been able post",
+        variant: "destructive",
+      })
     } finally {
       setIsEnrolling(false)
     }
