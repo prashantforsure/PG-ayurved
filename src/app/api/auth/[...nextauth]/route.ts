@@ -1,4 +1,3 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth, { AuthOptions, Profile } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
@@ -40,24 +39,67 @@ export const authOptions: AuthOptions = {
       try {
         const existingUser = await prisma.user.findUnique({
           where: { email: profile.email },
-        })
+          include: { accounts: true }
+        });
 
         if (!existingUser) {
-          const userCount = await prisma.user.count()
-          await prisma.user.create({
+          // Create new user if doesn't exist
+          const userCount = await prisma.user.count();
+          const newUser = await prisma.user.create({
             data: {
               email: profile.email,
               name: profile.name ?? '',
               image: profile.image ?? '',
               isAdmin: userCount === 0, // First user becomes an admin
             },
-          })
+          });
+
+          // Create the account link
+          if (account) {
+            await prisma.account.create({
+              data: {
+                userId: newUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                refresh_token: account.refresh_token,
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+              },
+            });
+          }
+        } else {
+          // If user exists but doesn't have a Google account linked
+          const hasGoogleAccount = existingUser.accounts.some(
+            (acc) => acc.provider === 'google'
+          );
+
+          if (!hasGoogleAccount && account) {
+            // Link the Google account to the existing user
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                refresh_token: account.refresh_token,
+                access_token: account.access_token,
+                expires_at: account.expires_at,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+              },
+            });
+          }
         }
 
-        return true
+        return true;
       } catch (error) {
-        console.error("Error during sign in:", error)
-        return false
+        console.error("Error during sign in:", error);
+        return false;
       }
     },
     async redirect({ url, baseUrl }) {
