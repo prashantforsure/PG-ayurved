@@ -9,8 +9,9 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { authOptions } from '@/app/api/[...nextauth]/route'
+
 import { UserAccountNav } from './UserAccountNav'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 const Navbar = async () => {
   const session = await getServerSession(authOptions)
