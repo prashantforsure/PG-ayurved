@@ -10,8 +10,9 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Calendar } from '@/components/ui/calendar'
 import { Loader2, BookOpen, GraduationCap, Clock, Award } from 'lucide-react'
-import { toast } from 'react-hot-toast'
+
 import { format } from 'date-fns'
+import { toast } from '@/hooks/use-toast'
 
 interface Course {
   id: string
@@ -65,7 +66,11 @@ export default function StudentDashboard() {
       setDashboardData(response.data)
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error)
-      toast.error('Failed to load dashboard data')
+      toast({
+        title: "Error",
+        description: "Failed to fetch dashboard data",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
