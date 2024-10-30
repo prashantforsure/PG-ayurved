@@ -11,6 +11,8 @@ import { Loader2, TrendingUp, Users, BookOpen, DollarSign } from 'lucide-react'
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { format, subDays, eachDayOfInterval } from 'date-fns'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { toast } from '@/hooks/use-toast'
 
 interface ReportData {
   totalRevenue: number
@@ -45,7 +47,11 @@ export default function ViewReports() {
       setReportData(response.data)
     } catch (error) {
       console.error('Failed to fetch report data:', error)
-      toast.error('Failed to load report data')
+      toast({
+        title: "Error",
+        description: "Failed to fetch report data",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
