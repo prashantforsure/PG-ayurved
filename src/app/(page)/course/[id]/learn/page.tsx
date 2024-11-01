@@ -10,6 +10,7 @@ import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Loader2, CheckCircle, Circle, PlayCircle, FileText, MessageCircle } from 'lucide-react'
+import { toast } from '@/hooks/use-toast'
 
 
 interface Lesson {
@@ -58,7 +59,11 @@ export default function CourseLearn() {
       setCurrentLesson(response.data.modules[0].lessons[0])
     } catch (error) {
       console.error('Failed to fetch course data:', error)
-      toast.error('Failed to load course data')
+      toast({
+        title: "Error",
+        description: "Failed to fetch course data",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -80,10 +85,18 @@ export default function CourseLearn() {
           progress: calculateProgress(prevCourse.modules, lessonId)
         }
       })
-      toast.success('Lesson completed!')
+      toast({
+        title: "Error",
+        description: "not been able post",
+        variant: "destructive",
+      })
     } catch (error) {
       console.error('Failed to mark lesson as complete:', error)
-      toast.error('Failed to update lesson progress')
+      toast({
+        title: "Error",
+        description: "Failed to mark lesson as complete:",
+        variant: "destructive",
+      })
     }
   }
 
