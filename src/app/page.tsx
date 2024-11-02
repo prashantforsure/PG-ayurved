@@ -169,7 +169,7 @@ export default function EnhancedHomePage() {
       {/* Hero Section */}
       <Navbar />
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <GradientBackground />
+        <GradientBackground /> 
         
         <FloatingElement className="top-1/4 left-1/4">
           <Brain className="text-white opacity-20 w-24 h-24" />
@@ -228,7 +228,7 @@ export default function EnhancedHomePage() {
         </div>
         <div className="absolute bottom-10 left-0 right-0 flex justify-center space-x-8 text-white">
           <div className="text-center">
-            <p className="text-3xl font-bold">100,000+</p>
+            <p className="text-3xl font-bold">20,000+</p>
             <p className="text-sm opacity-80">Students</p>
           </div>
           <div className="text-center">
