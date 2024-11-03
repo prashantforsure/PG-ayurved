@@ -432,55 +432,40 @@ export default  function HomePage({ initialSession }: HomePageProps) {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-blue-600 to-indigo-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-white space-y-6">
-              <h2  className="text-4xl font-bold">Ready to Start Your Journey?</h2>
-              <p className="text-xl opacity-90">
-                Join thousands of medical professionals who have advanced their careers with our platform.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-                  Get Started Now
-                </Button>
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
-                  Schedule a Demo
-                </Button>
-              </div>
+{/* about educators */}
+   <section className='py-24 bg-gray-50'>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className=' justify-between items-end mb-12'>
+    <div className='mb-5'>
+              <Badge className="bg-blue-100 text-blue-700 mb-4">
+                About Educators
+              </Badge>
+              <h2 className="text-4xl font-bold">Top Ayurved Expertise</h2>
             </div>
-            <div className="relative">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="bg-white p-8 rounded-xl shadow-xl"
-              >
-                <h3 className="text-2xl font-bold mb-4">Subscribe to Our Newsletter</h3>
-                <p className="text-gray-600 mb-6">Stay updated with the latest in medical education and research.</p>
-                <form onSubmit={handleSubscribe} className="space-y-4">
-                  <div>
-                    <Label htmlFor="email" className="sr-only">Email</Label>
-                    <Input
-                      id="email"
-                      placeholder="Enter your email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                    Subscribe
-                  </Button>
-                </form>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
+        <img 
+                  src="" 
+                  alt="Medical Education" 
+                  width="300"
+                  height="300"
+                  
+                  className="w-32 h-32 md:w-52 md:h-52 rounded-lg float-left mr-8 mb-8 object-center object-cover"
+                />
+                <p className='mb-4 text-base-content md:text-lg font-medium'>Hello Medicos,This is PG Ayurved Prayojnam. </p>
+                <p className='mb-5'>This is the initiative by <span className='font-semibold'>PG Ayurved Prayojanam</span> is a simple attempt to reach out to aspirants looking to prepare for AIAPGET
+                 (M.D./M.S.) || UPSC || PSC || PhD exams.</p>
+                {/* <p className='mb-5'><span className='font-bold'>Preparation's By</span>  - Live Online classes, Recorded classes through the integrative classes on PG Ayurved Prayojanam APP & Offline classes</p> */}
+                <div className='gap-8 mb-16'></div>
+                <p className='mb-3 font-bold'>Mentors</p>
+                <p className='mb-3'>बृहद त्रयी & लघु त्रयी Samhita Preparation by-
+                Dr. Abhilasha Patel, MD - Panchkarma </p>
+                <p className='mb-3'>1st, 2nd, 3rd & 4th years Subjects preparation by –
+                  Dr. R.K. Patel, MD - Panchkarma, PhD - Scholar
+                  Govt Medical Officer - MP Govt.
+
+</p>
+    </div>
+    </div>
+   </section>
 
       {/* Footer */}
       <footer className="bg-gray-50 py-12">
