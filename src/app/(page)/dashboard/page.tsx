@@ -8,11 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Calendar } from '@/components/ui/calendar'
+
 import { Loader2, BookOpen, GraduationCap, Clock, Award } from 'lucide-react'
 
 import { format } from 'date-fns'
 import { toast } from '@/hooks/use-toast'
+import { Calendar } from '@/components/ui/calender'
 
 interface Course {
   id: string
@@ -119,7 +120,7 @@ export default function StudentDashboard() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dashboardData?.upcomingAssignments.length}</div>
+            {/* <div className="text-2xl font-bold">{dashboardData?.upcomingAssignments.length}</div> */}
           </CardContent>
         </Card>
         <Card>
@@ -128,7 +129,7 @@ export default function StudentDashboard() {
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dashboardData?.recentAchievements.length}</div>
+            {/* <div className="text-2xl font-bold">{dashboardData?.recentAchievements?.length}</div> */}
           </CardContent>
         </Card>
       </div>
