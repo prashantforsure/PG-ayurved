@@ -38,26 +38,11 @@ const Navbar = async () => {
         </Link>
         
         <div className='flex items-center gap-4'>
-          {session?.user ? (
+          {session?.user.isAdmin ? (
             <>
               <div className="hidden md:flex items-center gap-4">
-                <Link href='/dashboard'>
-                  <Button 
-                    variant="ghost" 
-                    className='rounded-full px-6 py-2 text-sm hover:text-[#A259FF] transition-colors text-black border border-slate-900'
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
-                <Link href='/groups'>
-                  <Button 
-                    variant="ghost" 
-                    className='rounded-full px-6 py-2 text-sm hover:text-[#1ABCFE] transition-colors text-black border border-slate-900 flex items-center gap-2'
-                  >
-                    <PlusCircle className="h-4 w-4" />
-                    Create Group
-                  </Button>
-                </Link>
+                
+                
               </div>
               <div className="md:hidden hidden">
                 <Sheet>
