@@ -114,7 +114,7 @@ export default async function CourseCatalog({
     totalCourses = result.totalCourses
   } catch (error) {
     console.error('Failed to fetch courses:', error)
-    // You might want to add error handling here, such as displaying an error message
+   
   }
 
   const totalPages = Math.ceil(totalCourses / limit)
