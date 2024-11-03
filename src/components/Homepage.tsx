@@ -162,23 +162,15 @@ export default  function HomePage({ initialSession }: HomePageProps) {
           {initialSession?.user.isAdmin ? (
             <>
               <div className="hidden md:flex items-center gap-4">
-                <Link href='/dashboard'>
+                <Link href='/admin'>
                   <Button 
                     variant="ghost" 
-                    className='rounded-full px-6 py-2 text-sm hover:text-[#A259FF] transition-colors text-black border border-slate-900'
+                    className=' px-6 py-2 text-sm hover:text-[#A259FF] transition-colors text-black border border-slate-900'
                   >
                     Dashboard
                   </Button>
                 </Link>
-                <Link href='/groups'>
-                  <Button 
-                    variant="ghost" 
-                    className='rounded-full px-6 py-2 text-sm hover:text-[#1ABCFE] transition-colors text-black border border-slate-900 flex items-center gap-2'
-                  >
-                    <PlusCircle className="h-4 w-4" />
-                    Create Group
-                  </Button>
-                </Link>
+               
               </div>
               <div className="md:hidden hidden">
                 <Sheet>
@@ -200,7 +192,7 @@ export default  function HomePage({ initialSession }: HomePageProps) {
                       <Link href='/groups'>
                         <Button 
                           variant="ghost" 
-                          className='w-full justify-start rounded-full px-6 py-2 text-sm hover:text-[#1ABCFE] transition-colors text-black border border-slate-900 flex items-center gap-2'
+                          className='w-full justify-start  px-6 py-2 text-sm hover:text-[#1ABCFE] transition-colors text-black border border-slate-900 flex items-center gap-2'
                         >
                           <PlusCircle className="h-4 w-4" />
                           Create Group
@@ -221,7 +213,7 @@ export default  function HomePage({ initialSession }: HomePageProps) {
             <Link href='/auth/signin'>
               <Button 
                 variant="ghost" 
-                className='rounded-full px-6 py-2 text-white bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 transition-all duration-300 ease-in-out hover:shadow-[0_0_15px_rgba(236,72,153,0.5)] hover:-translate-y-0.5'
+                className=' px-6 py-2 text-white bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 transition-all duration-300 ease-in-out hover:shadow-[0_0_15px_rgba(236,72,153,0.5)] hover:-translate-y-0.5'
               >
                 Sign In
               </Button>
@@ -292,19 +284,19 @@ export default  function HomePage({ initialSession }: HomePageProps) {
               <div className="grid grid-cols-3 gap-8 pt-8">
                 <div>
                   <div className="text-3xl font-bold text-gray-900">
-                    <AnimatedNumber value="50000" />+
+                    <AnimatedNumber value="15000" />+
                   </div>
                   <p className="text-gray-600">Active Students</p>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-gray-900">
-                    <AnimatedNumber value="200" />+
+                    <AnimatedNumber value="2" />
                   </div>
                   <p className="text-gray-600">Expert Instructors</p>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-gray-900">
-                    <AnimatedNumber value="95" />%
+                    <AnimatedNumber value="45" />%
                   </div>
                   <p className="text-gray-600">Success Rate</p>
                 </div>
@@ -319,14 +311,14 @@ export default  function HomePage({ initialSession }: HomePageProps) {
                 className="relative z-10"
               >
                 <img 
-                  src="/placeholder.svg?height=600&width=800" 
+                  src="/images/frontpageimg.jpg" 
                   alt="Medical Education" 
                   className="rounded-2xl shadow-2xl"
                 />
                 <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg">
                   <div className="flex items-center space-x-2">
                     <Star className="h-5 w-5 text-yellow-400" />
-                    <span className="font-bold">4.9/5</span>
+                    <span className="font-bold">4.6/5</span>
                     <span className="text-gray-500">(2.5k+ reviews)</span>
                   </div>
                 </div>
@@ -337,7 +329,6 @@ export default  function HomePage({ initialSession }: HomePageProps) {
         </motion.div>
       </section>
 
-      {/* Features Section */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
