@@ -4,28 +4,50 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { authOptions } from "../auth/[...nextauth]/route";
 
-export async function GET(req: NextRequest){
-  try{
-    const getCourses = await prisma.course.findMany({
-        include: {
-            category: true,
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url)
+    const page = Number(searchParams.get('page')) || 1
+    const limit = Number(searchParams.get('limit')) || 12
+    const search = searchParams.get('search') || ''
+  
+    const skip = (page - 1) * limit
+  
+    try {
+      const [courses, totalCourses] = await Promise.all([
+        prisma.course.findMany({
+          where: {
+            OR: [
+              { title: { contains: search, mode: 'insensitive' } },
+              { description: { contains: search, mode: 'insensitive' } },
+            ],
           },
-    })
-    if(!getCourses){
-        return NextResponse.json({
-            message: "no courses found"
-        })
+          include: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+          skip,
+          take: limit,
+          orderBy: { createdAt: 'desc' },
+        }),
+        prisma.course.count({
+          where: {
+            OR: [
+              { title: { contains: search, mode: 'insensitive' } },
+              { description: { contains: search, mode: 'insensitive' } },
+            ],
+          },
+        }),
+      ])
+  
+      return NextResponse.json({ courses, totalCourses })
+    } catch (error) {
+      console.error('Failed to fetch courses:', error)
+      return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
-    return NextResponse.json(getCourses)
-   }catch(error){
-    console.log(error);
-    return NextResponse.json({
-        error: 'Failed to fetch courses'
-    }, {
-        status: 500
-    })
-}
-}
+  }
 
 export async function POST( req: NextRequest){
     const session = await getServerSession(authOptions);
