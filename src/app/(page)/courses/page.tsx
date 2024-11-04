@@ -10,10 +10,11 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
+
 interface Course {
   id: string
   title: string
-  thumbnailUrl: string
+  thumbnailUrl: string | null // Updated to allow null
   price: number
   instructor: string
   category: string
@@ -32,7 +33,15 @@ export default function CoursesPage() {
   const fetchCourses = async () => {
     try {
       const response = await axios.get('/api/courses')
-      setCourses(response.data)
+      const formattedCourses = response.data.map((course: any) => ({
+        id: course.id,
+        title: course.title,
+        thumbnailUrl: course.thumbnail || '/placeholder.jpg', // Use a placeholder if thumbnail is null
+        price: course.price,
+        instructor: 'John Doe', // Assuming all courses have the same instructor
+        category: course.category.name,
+      }))
+      setCourses(formattedCourses)
     } catch (error) {
       console.error('Error fetching courses:', error)
     }
@@ -57,7 +66,6 @@ export default function CoursesPage() {
   const handleCourseClick = (courseId: string) => {
     router.push(`/courses/${courseId}`)
   }
-
   return (
     <div className="container mx-auto py-10 px-4">
       <h1 className="text-4xl font-bold mb-8 text-gray-900">Explore Courses</h1>
@@ -88,11 +96,17 @@ export default function CoursesPage() {
         {filteredAndSortedCourses.map(course => (
           <Card key={course.id} className="flex flex-col overflow-hidden transition-shadow duration-300 hover:shadow-lg">
             <CardHeader className="p-0">
-              <img src={course.thumbnailUrl} alt={course.title} className="w-full h-48 object-cover" />
+              {course.thumbnailUrl ? (
+                <img src={course.thumbnailUrl} alt={course.title} className="w-full h-48 object-cover" />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500 text-xl">No Thumbnail</span>
+                </div>
+              )}
             </CardHeader>
             <CardContent className="flex-grow p-4">
               <CardTitle className="mb-2 text-xl font-semibold text-gray-900">{course.title}</CardTitle>
-              <p className="text-sm text-gray-600 mb-2">{course.instructor}</p>
+              
               <p className="text-sm text-gray-500">{course.category}</p>
             </CardContent>
             <CardFooter className="flex justify-between items-center p-4 bg-gray-50">

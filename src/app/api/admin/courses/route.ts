@@ -73,7 +73,7 @@ export async function GET(request: Request) {
 }
 
 
-import { uploadImage } from '@/lib/cloudinary'; // Import the image upload function
+import { uploadImage } from '@/lib/cloudinary'; 
 
 export async function POST(request: Request) {
   try {

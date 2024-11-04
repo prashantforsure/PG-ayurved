@@ -7,9 +7,8 @@ export async function GET() {
       select: {
         id: true,
         title: true,
-        
         price: true,
-      
+        thumbnail: true,
         category: {
           select: {
             name: true,
@@ -21,9 +20,8 @@ export async function GET() {
     const formattedCourses = courses.map(course => ({
       id: course.id,
       title: course.title,
-     
       price: course.price,
- 
+      thumbnail: course.thumbnail,
       category: course.category.name,
     }))
 

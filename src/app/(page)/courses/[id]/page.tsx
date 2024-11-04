@@ -18,7 +18,7 @@ interface CourseDetail {
   id: string
   title: string
   description: string
-  thumbnailUrl: string
+  thumbnail: string | null
   instructor: string
   price: number
   category: string
@@ -57,7 +57,14 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
         <div className="lg:col-span-2">
           <Card className="overflow-hidden">
             <CardHeader className="p-0">
-              <img src={course.thumbnailUrl} alt={course.title} className="w-full h-64 object-cover" />
+            {course.thumbnail ? (
+  <img src={course.thumbnail} alt={course.title} className="w-full h-48 object-cover" />
+) : (
+  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+    <span className="text-gray-500 text-xl">No Thumbnail</span>
+  </div>
+)}
+
             </CardHeader>
             <CardContent className="p-6">
               <h1 className="text-3xl font-bold mb-4 text-gray-900">{course.title}</h1>

@@ -15,6 +15,7 @@ export async function GET(
         category: {
           select: {
             name: true,
+            
           },
         },
         lessons: {
@@ -22,7 +23,7 @@ export async function GET(
           select: {
             id: true,
             title: true,
-           
+            
           },
         },
       },
@@ -32,19 +33,15 @@ export async function GET(
       return NextResponse.json({ error: 'Course not found' }, { status: 404 })
     }
 
-
-
     const formattedCourseDetail = {
       id: courseDetail.id,
       title: courseDetail.title,
       description: courseDetail.description,
- 
-     
+      thumbnailUrl: courseDetail.thumbnail,
       price: courseDetail.price,
       category: courseDetail.category.name,
       lessons: courseDetail.lessons,
-    
-    }
+    };
 
     return NextResponse.json(formattedCourseDetail)
   } catch (error) {

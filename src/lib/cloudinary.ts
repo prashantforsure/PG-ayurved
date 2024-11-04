@@ -16,16 +16,16 @@ export async function uploadImage(image: Blob): Promise<string | null> {
   } catch (error) {
     console.error('Error uploading image:', error);
     return null;
-  }  
+  }
 }
 
-function blobToBase64(blob: Blob): Promise<string> {
+async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      resolve(reader.result as string);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
+    blob.arrayBuffer().then((buffer) => {
+      const base64 = Buffer.from(buffer).toString('base64');
+      resolve(`data:application/octet-stream;base64,${base64}`);
+    }).catch((error) => {
+      reject(error);
+    });
   });
 }
