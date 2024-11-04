@@ -84,12 +84,37 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
+    
+    if (!body.title || !body.description || !body.category) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
     const course = await prisma.course.create({
-      data: body,
+      data: {
+        title: body.title,
+        description: body.description,
+        category: {
+          connectOrCreate: {
+            where: { name: body.category },
+            create: { name: body.category },
+          },
+        },
+        price: body.price,
+        startDate: new Date(body.startDate),
+        endDate: new Date(body.endDate),
+        lessons: {
+          create: body.lessons.map((lesson: any) => ({
+            title: lesson.title,
+            content: lesson.content,
+            duration: lesson.duration,
+          })),
+        },
+      },
     })
+
     return NextResponse.json(course)
   } catch (error) {
-    console.error('Failed to create course:', error)
+    console.error('Failed  to create course:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
