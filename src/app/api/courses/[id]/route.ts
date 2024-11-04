@@ -34,7 +34,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
   try {
     const json = await request.json();
-    const { title, description, price, startDate, endDate, categoryId } = json;
+    const { title, description, price, categoryId } = json;
 
     const updatedCourse = await prisma.course.update({
       where: { id: params.id },
@@ -42,8 +42,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         title,
         description,
         price: parseFloat(price),
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+      
         categoryId,
       },
     });

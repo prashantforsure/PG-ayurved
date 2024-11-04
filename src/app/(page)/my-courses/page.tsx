@@ -1,150 +1,98 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import axios from 'axios'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2, Search, BookOpen, Clock } from 'lucide-react'
-import { toast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
+import { Search, ChevronDown } from 'lucide-react'
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface Course {
   id: string
   title: string
-  description: string
-  progress: number
-  totalLessons: number
-  completedLessons: number
-  lastAccessedAt: string
+  thumbnailUrl: string
+  latestLesson: {
+    id: string
+    title: string
+  }
 }
 
-export default function EnrolledCourses() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
+export default function MyCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('lastAccessed')
+  const [sortBy, setSortBy] = useState('title')
+  const router = useRouter()
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin')
-    } else if (status === 'authenticated') {
-      fetchEnrolledCourses()
-    }
-  }, [status])
+    fetchCourses()
+  }, [])
 
-  const fetchEnrolledCourses = async () => {
+  const fetchCourses = async () => {
     try {
-      const response = await axios.get<Course[]>('/api/student/courses')
+      const response = await axios.get('/api/my-courses')
       setCourses(response.data)
     } catch (error) {
-      console.error('Failed to fetch enrolled courses:', error)
-      toast({
-        title: "Error",
-        description: "Failed to fetch enrolled courses:",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
+      console.error('Error fetching courses:', error)
     }
   }
 
   const filteredAndSortedCourses = courses
     .filter(course => course.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    .sort((a, b) => {
-      if (sortBy === 'title') {
-        return a.title.localeCompare(b.title)
-      } else if (sortBy === 'progress') {
-        return b.progress - a.progress
-      } else {
-        return new Date(b.lastAccessedAt).getTime() - new Date(a.lastAccessedAt).getTime()
-      }
-    })
+    .sort((a, b) => a.title.localeCompare(b.title))
 
-  if (status === 'loading' || isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="mr-2 h-16 w-16 animate-spin" />
-      </div>
-    )
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value)
   }
 
-  if (!session) {
-    return <div className="flex justify-center items-center h-screen">Access Denied</div>
+  const handleSortChange = (value: string) => {
+    setSortBy(value)
+  }
+
+  const handleCourseClick = (courseId: string) => {
+    router.push(`/my-courses/${courseId}`)
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">My Courses</h1>
+    <div className="container mx-auto py-10">
+      <h1 className="text-3xl font-bold mb-8">My Courses</h1>
 
       <div className="flex justify-between items-center mb-6">
         <div className="relative w-64">
+          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
             type="text"
             placeholder="Search courses..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             className="pl-10"
           />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         </div>
-        <Select value={sortBy} onValueChange={setSortBy}>
+        <Select onValueChange={handleSortChange} value={sortBy}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="lastAccessed">Last Accessed</SelectItem>
-            <SelectItem value="title">Title</SelectItem>
-            <SelectItem value="progress">Progress</SelectItem>
+            <SelectItem value="title">Course Name</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredAndSortedCourses.map(course => (
-          <Card key={course.id} className="flex flex-col">
+          <Card key={course.id} className="flex flex-col cursor-pointer" onClick={() => handleCourseClick(course.id)}>
             <CardHeader>
-              <CardTitle>{course.title}</CardTitle>
+              <img src={course.thumbnailUrl} alt={course.title} className="w-full h-48 object-cover rounded-t-lg" />
             </CardHeader>
-            <CardContent className="flex-grow flex flex-col justify-between">
-              <div>
-                <p className="text-sm text-gray-500 mb-4">{course.description}</p>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">Progress: {course.progress}%</span>
-                  <span className="text-sm text-gray-500">
-                    {course.completedLessons}/{course.totalLessons} lessons
-                  </span>
-                </div>
-                <Progress value={course.progress} className="w-full mb-4" />
-                <div className="flex items-center text-sm text-gray-500 mb-4">
-                  <Clock className="mr-2 h-4 w-4" />
-                  Last accessed: {new Date(course.lastAccessedAt).toLocaleDateString()}
-                </div>
-              </div>
-              <Button className="w-full" onClick={() => router.push(`/courses/${course.id}`)}>
-                <BookOpen className="mr-2 h-4 w-4" />
-                Continue Learning
-              </Button>
+            <CardContent className="flex-grow">
+              <CardTitle className="mb-2">{course.title}</CardTitle>
+              <p className="text-sm text-gray-600">Latest lesson: {course.latestLesson.title}</p>
             </CardContent>
           </Card>
         ))}
       </div>
-
-      {filteredAndSortedCourses.length === 0 && (
-        <div className="text-center mt-8">
-          <p className="text-xl font-semibold">No courses found</p>
-          <p className="text-gray-500">Try adjusting your search or explore new courses</p>
-          <Button className="mt-4" onClick={() => router.push('/courses')}>
-            Explore Courses
-          </Button>
-        </div>
-      )}
     </div>
   )
 }
