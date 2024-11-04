@@ -27,14 +27,12 @@ const courseSchema = z.object({
   description: z.string().min(1, 'Description is required'),
   category: z.string().min(1, 'Category is required'),
   price: z.number().min(0, 'Price must be 0 or greater'),
-  
+  thumbnail: z.any().optional(), // Add the thumbnail field
   lessons: z.array(z.object({
     title: z.string().min(1, 'Lesson title is required'),
     content: z.string().min(1, 'Lesson content is required'),
- 
   })),
-})
-
+});
 type CourseFormData = z.infer<typeof courseSchema>
 
 export default function CreateCoursePage() {
@@ -62,16 +60,19 @@ export default function CreateCoursePage() {
    
   
     try {
+      const formData = new FormData();
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      formData.append('category', data.category);
+      formData.append('price', data.price.toString());
+      formData.append('thumbnail', data.thumbnail[0]); // Add the thumbnail to the form data
+      data.lessons.forEach((lesson) => {
+        formData.append('lessons', lesson.title);
+      });
       const response = await fetch('/api/admin/courses', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          
-        }),
-      })
+        body: formData,
+      });
   
       if (!response.ok) {
         const errorData = await response.json()
@@ -165,6 +166,18 @@ export default function CreateCoursePage() {
           </div>
 
           <div className="space-y-6">
+          <div>
+  <label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700">
+    Thumbnail
+  </label>
+  <input
+  type="file"
+  id="thumbnail"
+  {...register('thumbnail', { required: 'Thumbnail is required' })}
+  className="mt-1 block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
+/>
+{errors.thumbnail && <p className="mt-1 text-sm text-red-600">thumbnail error</p>}
+</div>
             <div>
               <div className="flex justify-between items-center mb-4">
                 <label className="block text-sm font-medium text-gray-700">

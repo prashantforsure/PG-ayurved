@@ -73,31 +73,46 @@ export async function GET(request: Request) {
 }
 
 
+import { uploadImage } from '@/lib/cloudinary'; // Import the image upload function
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const formData = await request.formData();
+    const title = formData.get('title') as string;
+    const description = formData.get('description') as string;
+    const category = formData.get('category') as string;
+    const price = parseFloat(formData.get('price') as string);
+    const thumbnail = formData.get('thumbnail') as Blob | undefined; // Get the thumbnail from the form data
 
-    if (!body.title || !body.description || !body.category) {
+    if (!title || !description || !category) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-    const category = await prisma.category.upsert({
-      where: { name: body.category },
+
+    const category_data = await prisma.category.upsert({
+      where: { name: category },
       update: {},
-      create: { name: body.category },
+      create: { name: category },
     });
+
+    let thumbnailUrl = null;
+    if (thumbnail) {
+      thumbnailUrl = await uploadImage(thumbnail);
+    }
 
     const course = await prisma.course.create({
       data: {
-        title: body.title,
-        description: body.description,
-        price: Number(body.price),
-        categoryId: category.id,
+        title,
+        description,
+        price,
+        categoryId: category_data.id,
+        thumbnail: thumbnailUrl, // Store the thumbnail URL in the database
         lessons: {
-          create: body.lessons?.map((lesson: any) => ({
-            title: lesson.title,
-            content: lesson.content,
-          
-          })) || [],
+          create: formData
+            .getAll('lessons')
+            .map((lesson) => ({
+              title: lesson.toString(),
+              content: lesson.toString(),
+            })),
         },
       },
       include: {

@@ -62,6 +62,7 @@ model Course {
   title       String
   description String
   price       Float
+    thumbnail   String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   categoryId  String
@@ -84,6 +85,7 @@ model Lesson {
   title     String
   content   String
   courseId  String
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   course    Course   @relation(fields: [courseId], references: [id])
