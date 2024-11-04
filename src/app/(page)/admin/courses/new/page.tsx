@@ -2,41 +2,32 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm, Controller } from 'react-hook-form'
+import { useFieldArray, useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { format } from 'date-fns'
-import { Calendar as CalendarIcon, Loader2 } from 'lucide-react'
+
+import { Calendar as CalendarIcon, Loader2, Plus, Trash } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 
+import { toast } from '@/hooks/use-toast'
 
 import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
-import { toast } from '@/hooks/use-toast'
-import { Calendar } from '@/components/ui/calender'
+
 
 const courseSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
   category: z.string().min(1, 'Category is required'),
-  featuredImage: z.string().optional(),
   price: z.number().min(0, 'Price must be 0 or greater'),
-  startDate: z.date(),
-  endDate: z.date(),
-  enrollmentLimit: z.number().int().min(0, 'Enrollment limit must be 0 or greater'),
-  prerequisites: z.array(z.string()),
-  certificateOffered: z.boolean(),
-  visibility: z.enum(['public', 'private']),
+  
   lessons: z.array(z.object({
     title: z.string().min(1, 'Lesson title is required'),
     content: z.string().min(1, 'Lesson content is required'),
@@ -48,33 +39,46 @@ type CourseFormData = z.infer<typeof courseSchema>
 
 export default function CreateCoursePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop' | 'student'>('desktop')
   const router = useRouter()
 
-  const { register, control, handleSubmit, formState: { errors } } = useForm<CourseFormData>({
+  const { register, control, handleSubmit, formState: { errors }, setValue } = useForm<CourseFormData>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
-      visibility: 'private',
-      certificateOffered: false,
+      title: '',
+      description: '',
+      category: '',
+      price: 0,
       lessons: [{ title: '', content: '', duration: 0 }],
     },
   })
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "lessons"
+  })
   const onSubmit = async (data: CourseFormData) => {
     setIsSubmitting(true)
+    
+   
+  
     try {
       const response = await fetch('/api/admin/courses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          
+        }),
       })
-
+  
       if (!response.ok) {
-        throw new Error('Failed to create course')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create course')
       }
-
+  
+      const result = await response.json()
       toast({
         title: "Success",
         description: "Course created successfully.",
@@ -84,7 +88,7 @@ export default function CreateCoursePage() {
       console.error('Error creating course:', error)
       toast({
         title: "Error",
-        description: "Failed to create course. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create course. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -124,24 +128,24 @@ export default function CreateCoursePage() {
               <label htmlFor="category" className="block text-sm font-medium text-gray-700">
                 Category
               </label>
-              {/* <Select onValueChange={(value) => register('category').onChange(value)}> */}
-              <Select 
-                onValueChange={(value) => {
-                register('category').onChange({
-                target: { value, name: 'visibility' },
-                type: 'change'
-                 });
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="programming">Programming</SelectItem>
-                  <SelectItem value="design">Design</SelectItem>
-                  <SelectItem value="business">Business</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="category"
+                control={control}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AIAPGET">AIAPGET (M.D. , M.S.)</SelectItem>
+                      <SelectItem value="PSC">Ayurved PSC | UPSC(AMO)</SelectItem>
+                      <SelectItem value="Phd">Ayurved Ph.D</SelectItem>
+                      <SelectItem value="dams">BAMS</SelectItem>
+                      <SelectItem value="business">Business</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
             </div>
 
@@ -149,161 +153,74 @@ export default function CreateCoursePage() {
               <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                 Price
               </label>
-              <Input id="price" type="number" {...register('price', { valueAsNumber: true })} className="mt-1" />
+              <Input
+                id="price"
+                type="number"
+                {...register('price', { valueAsNumber: true })}
+                className="mt-1"
+              />
               {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price.message}</p>}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                  Start Date
-                </label>
-                <Controller
-                  name="startDate"
-                  control={control}
-                  render={({ field }) => (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start text-left font-normal">
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  )}
-                />
-                {errors.startDate && <p className="mt-1 text-sm text-red-600">{errors.startDate.message}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
-                  End Date
-                </label>
-                <Controller
-                  name="endDate"
-                  control={control}
-                  render={({ field }) => (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start text-left font-normal">
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  )}
-                />
-                {errors.endDate && <p className="mt-1 text-sm text-red-600">{errors.endDate.message}</p>}
-              </div>
-            </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <label htmlFor="enrollmentLimit" className="block text-sm font-medium text-gray-700">
-                Enrollment Limit
-              </label>
-              <Input id="enrollmentLimit" type="number" {...register('enrollmentLimit', { valueAsNumber: true })} className="mt-1" />
-              {errors.enrollmentLimit && <p className="mt-1 text-sm text-red-600">{errors.enrollmentLimit.message}</p>}
-            </div>
-
-           
-
-            <div className="flex items-center space-x-2">
-              <Switch id="certificateOffered" {...register('certificateOffered')} />
-              <label htmlFor="certificateOffered" className="text-sm font-medium text-gray-700">
-                Certificate Offered
-              </label>
-            </div>
-
-            <div>
-              <label htmlFor="visibility" className="block text-sm font-medium text-gray-700">
-                Visibility
-              </label>
-              {/* <Select onValueChange={(value) => register('visibility').onChange(value)}> */}
-              <Select 
-                onValueChange={(value) => {
-                register('visibility').onChange({
-                target: { value, name: 'visibility' },
-                type: 'change'
-                 });
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select visibility" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="public">Public</SelectItem>
-                  <SelectItem value="private">Private</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Lessons
-              </label>
+              <div className="flex justify-between items-center mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Lessons
+                </label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => append({ title: '', content: '', duration: 0 })}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Lesson
+                </Button>
+              </div>
               
-              <Textarea placeholder="Add lesson details here..." className="mt-1" />
+              {fields.map((field, index) => (
+                <Card key={field.id} className="mb-4">
+                  <CardContent className="pt-6">
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <Input
+                          placeholder="Lesson title"
+                          {...register(`lessons.${index}.title`)}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => remove(index)}
+                          className="ml-2"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      
+                      <Controller
+                        name={`lessons.${index}.content`}
+                        control={control}
+                        render={({ field }) => (
+                          <ReactQuill theme="snow" value={field.value} onChange={field.onChange} />
+                        )}
+                      />
+                      
+                      <Input
+                        type="number"
+                        placeholder="Duration (minutes)"
+                        {...register(`lessons.${index}.duration`, { valueAsNumber: true })}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {errors.lessons && <p className="mt-1 text-sm text-red-600">Please add at least one lesson</p>}
             </div>
           </div>
-        </div>
-
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Preview</h2>
-          <Tabs value={previewMode} onValueChange={(value) => setPreviewMode(value as 'mobile' | 'desktop' | 'student')}>
-            <TabsList>
-              <TabsTrigger value="mobile">Mobile</TabsTrigger>
-              <TabsTrigger value="desktop">Desktop</TabsTrigger>
-              <TabsTrigger value="student">Student View</TabsTrigger>
-            </TabsList>
-            <TabsContent value="mobile">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="w-[375px] h-[667px] border border-gray-200 rounded-lg overflow-hidden mx-auto">
-               
-                    <p className="p-4">Mobile Preview</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="desktop">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="w-full aspect-video border border-gray-200 rounded-lg overflow-hidden">
-              
-                    <p className="p-4">Desktop Preview</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="student">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="w-full aspect-video border border-gray-200 rounded-lg overflow-hidden">
-                 
-                    <p className="p-4">Student View Preview</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
         </div>
 
         <div className="flex justify-end space-x-4">

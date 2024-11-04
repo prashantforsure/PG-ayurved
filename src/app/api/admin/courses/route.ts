@@ -8,8 +8,7 @@ export async function GET(request: Request) {
   const search = searchParams.get('search') || ''
   const category = searchParams.get('category') || ''
   const status = searchParams.get('status') || ''
-  const startDate = searchParams.get('startDate') || ''
-  const endDate = searchParams.get('endDate') || ''
+ 
   const minPrice = Number(searchParams.get('minPrice')) || 0
   const maxPrice = Number(searchParams.get('maxPrice')) || Infinity
 
@@ -28,8 +27,6 @@ export async function GET(request: Request) {
             },
             category ? { category: { name: category } } : {},
             
-            startDate ? { startDate: { gte: new Date(startDate) } } : {},
-            endDate ? { endDate: { lte: new Date(endDate) } } : {},
             { price: { gte: minPrice, lte: maxPrice } },
           ],
         },
@@ -56,8 +53,7 @@ export async function GET(request: Request) {
             },
             category ? { category: { name: category } } : {},
             
-            startDate ? { startDate: { gte: new Date(startDate) } } : {},
-            endDate ? { endDate: { lte: new  Date(endDate) } } : {},
+         
             { price: { gte: minPrice, lte: maxPrice } },
           ],
         },
@@ -81,40 +77,50 @@ export async function GET(request: Request) {
   }
 }
 
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    
+    const body = await request.json();
+
+    // Validate required fields
     if (!body.title || !body.description || !body.category) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // First, ensure the category exists or create it
+    const category = await prisma.category.upsert({
+      where: { name: body.category },
+      update: {},
+      create: { name: body.category },
+    });
+
+    // Create the course with the category ID
     const course = await prisma.course.create({
       data: {
         title: body.title,
         description: body.description,
-        category: {
-          connectOrCreate: {
-            where: { name: body.category },
-            create: { name: body.category },
-          },
-        },
-        price: body.price,
-        startDate: new Date(body.startDate),
-        endDate: new Date(body.endDate),
+        price: Number(body.price),
+        categoryId: category.id,
         lessons: {
-          create: body.lessons.map((lesson: any) => ({
+          create: body.lessons?.map((lesson: any) => ({
             title: lesson.title,
             content: lesson.content,
-            duration: lesson.duration,
-          })),
+            duration: Number(lesson.duration),
+          })) || [],
         },
       },
-    })
+      include: {
+        category: true,
+        lessons: true,
+      },
+    });
 
-    return NextResponse.json(course)
+    return NextResponse.json(course);
   } catch (error) {
-    console.error('Failed  to create course:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    console.error('Failed to create course:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error', details: (error as Error).message },
+      { status: 500 }
+    );
   }
 }
