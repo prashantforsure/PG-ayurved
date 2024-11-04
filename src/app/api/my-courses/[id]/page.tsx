@@ -1,22 +1,26 @@
 import { NextResponse } from 'next/server'
 import  prisma  from '@/lib/prisma'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '../../auth/[...nextauth]/route'
+
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getServerSession(authOptions)
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const courseDetail = await prisma.course.findUnique({
       where: {
         id: params.id,
       },
       include: {
        
-        category: {
-          select: {
-            name: true,
-          },
-        },
         lessons: {
           
           select: {
@@ -25,6 +29,12 @@ export async function GET(
            
           },
         },
+        enrollments: {
+          where: {
+            userId: session.user.id,
+          },
+          
+        },
       },
     })
 
@@ -32,18 +42,15 @@ export async function GET(
       return NextResponse.json({ error: 'Course not found' }, { status: 404 })
     }
 
-
-
+    
     const formattedCourseDetail = {
       id: courseDetail.id,
       title: courseDetail.title,
       description: courseDetail.description,
- 
-     
-      price: courseDetail.price,
-      category: courseDetail.category.name,
-      lessons: courseDetail.lessons,
+      
     
+      lessons: courseDetail.lessons,
+     
     }
 
     return NextResponse.json(formattedCourseDetail)

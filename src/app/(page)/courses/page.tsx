@@ -1,166 +1,112 @@
 'use client'
-import { Suspense } from 'react'
-import Link from 'next/link'
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import { Search, ChevronDown } from 'lucide-react'
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface Course {
   id: string
   title: string
-  description: string
+  thumbnailUrl: string
   price: number
-  category: {
-    name: string
-  }
+  instructor: string
+  category: string
 }
 
-interface CoursesResponse {
-  courses: Course[]
-  totalCourses: number
-}
+export default function CoursesPage() {
+  const [courses, setCourses] = useState<Course[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState('title')
+  const router = useRouter()
 
-async function getCourses(page = 1, search = '', limit = 12): Promise<CoursesResponse> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses?page=${page}&search=${search}&limit=${limit}`)
-  if (!res.ok) {
-    throw new Error('Failed to fetch courses')
-  }
-  return res.json()
-}
+  useEffect(() => {
+    fetchCourses()
+  }, [])
 
-function CourseCard({ course }: { course: Course }) {
-  return (
-    <Card className="flex flex-col justify-between">
-      <CardHeader>
-        <CardTitle className="line-clamp-2">{course.title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground line-clamp-3">{course.description}</p>
-        <p className="text-sm text-muted-foreground mt-2">Category: {course.category.name}</p>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <span className="text-sm font-semibold">${course.price.toFixed(2)}</span>
-        <Link href={`/courses/${course.id}`}>
-          <Button variant="outline">View Course</Button>
-        </Link>
-      </CardFooter>
-    </Card>
-  )
-}
-
-function CourseSkeleton() {
-  return (
-    <Card className="flex flex-col justify-between">
-      <CardHeader>
-        <Skeleton className="h-6 w-3/4" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-5/6" />
-        <Skeleton className="h-4 w-1/2 mt-2" />
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Skeleton className="h-4 w-1/4" />
-        <Skeleton className="h-10 w-1/3" />
-      </CardFooter>
-    </Card>
-  )
-}
-
-function Pagination({ currentPage, totalPages, onPageChange }: { currentPage: number; totalPages: number; onPageChange: (page: number) => void }) {
-  return (
-    <div className="flex items-center justify-center space-x-2 mt-8">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      <span className="text-sm">
-        Page {currentPage} of {totalPages}
-      </span>
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
-    </div>
-  )
-}
-
-export default async function CourseCatalog({
-  searchParams,
-}: {
-  searchParams: { page?: string; search?: string }
-}) {
-  const page = Number(searchParams.page) || 1
-  const search = searchParams.search || ''
-  const limit = 12
-
-  let courses: Course[] = []
-  let totalCourses = 0
-
-  try {
-    const result = await getCourses(page, search, limit)
-    courses = result.courses
-    totalCourses = result.totalCourses
-  } catch (error) {
-    console.error('Failed to fetch courses:', error)
-   
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get('/api/courses')
+      setCourses(response.data)
+    } catch (error) {
+      console.error('Error fetching courses:', error)
+    }
   }
 
-  const totalPages = Math.ceil(totalCourses / limit)
+  const filteredAndSortedCourses = courses
+    .filter(course => course.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => {
+      if (sortBy === 'title') return a.title.localeCompare(b.title)
+      if (sortBy === 'price') return a.price - b.price
+      return 0
+    })
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value)
+  }
+
+  const handleSortChange = (value: string) => {
+    setSortBy(value)
+  }
+
+  const handleCourseClick = (courseId: string) => {
+    router.push(`/courses/${courseId}`)
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Course Catalog</h1>
-      <div className="mb-8">
-        <form className="flex gap-4">
+    <div className="container mx-auto py-10 px-4">
+      <h1 className="text-4xl font-bold mb-8 text-gray-900">Explore Courses</h1>
+
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
+        <div className="relative w-full md:w-64">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
-            type="search"
+            type="text"
             placeholder="Search courses..."
-            name="search"
-            defaultValue={search}
-            className="flex-grow"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="pl-10 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
-          <Button type="submit">
-            <Search className="h-4 w-4 mr-2" />
-            Search
-          </Button>
-        </form>
+        </div>
+        <Select onValueChange={handleSortChange} value={sortBy}>
+          <SelectTrigger className="w-full md:w-[180px] bg-white border-gray-300">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="title">Course Name</SelectItem>
+            <SelectItem value="price">Price</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <Suspense fallback={
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: limit }).map((_, i) => (
-            <CourseSkeleton key={i} />
-          ))}
-        </div>
-      }>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {courses.map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))}
-        </div>
-      </Suspense>
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPageChange={(newPage) => {
-          const searchParams = new URLSearchParams({
-            page: newPage.toString(),
-            ...(search && { search }),
-          })
-          window.location.search = searchParams.toString()
-        }}
-      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredAndSortedCourses.map(course => (
+          <Card key={course.id} className="flex flex-col overflow-hidden transition-shadow duration-300 hover:shadow-lg">
+            <CardHeader className="p-0">
+              <img src={course.thumbnailUrl} alt={course.title} className="w-full h-48 object-cover" />
+            </CardHeader>
+            <CardContent className="flex-grow p-4">
+              <CardTitle className="mb-2 text-xl font-semibold text-gray-900">{course.title}</CardTitle>
+              <p className="text-sm text-gray-600 mb-2">{course.instructor}</p>
+              <p className="text-sm text-gray-500">{course.category}</p>
+            </CardContent>
+            <CardFooter className="flex justify-between items-center p-4 bg-gray-50">
+              <span className="text-lg font-bold text-gray-900">${course.price.toFixed(2)}</span>
+              <div className="space-x-2">
+                <Button variant="outline" onClick={() => handleCourseClick(course.id)}>
+                  View Course
+                </Button>
+                <Button>Buy Now</Button>
+              </div>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
     </div>
   )
 }
