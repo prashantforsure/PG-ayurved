@@ -31,7 +31,7 @@ const courseSchema = z.object({
   lessons: z.array(z.object({
     title: z.string().min(1, 'Lesson title is required'),
     content: z.string().min(1, 'Lesson content is required'),
-    duration: z.number().min(1, 'Duration must be 1 or greater'),
+ 
   })),
 })
 
@@ -48,7 +48,7 @@ export default function CreateCoursePage() {
       description: '',
       category: '',
       price: 0,
-      lessons: [{ title: '', content: '', duration: 0 }],
+      lessons: [{ title: '', content: ''}],
     },
   })
 
@@ -174,7 +174,7 @@ export default function CreateCoursePage() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => append({ title: '', content: '', duration: 0 })}
+                  onClick={() => append({ title: '', content: ''})}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add Lesson
@@ -209,11 +209,7 @@ export default function CreateCoursePage() {
                         )}
                       />
                       
-                      <Input
-                        type="number"
-                        placeholder="Duration (minutes)"
-                        {...register(`lessons.${index}.duration`, { valueAsNumber: true })}
-                      />
+                     
                     </div>
                   </CardContent>
                 </Card>

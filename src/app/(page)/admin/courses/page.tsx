@@ -50,9 +50,12 @@ interface Course {
   category: string
   price: number
   enrollmentCount: number
-  startDate: string
-  endDate: string
-  status: 'Active' | 'Draft' | 'Archived'
+  
+}
+interface APIResponse {
+  courses: Course[]
+  totalCourses: number
+  totalPages: number
 }
 
 const columns: ColumnDef<Course>[] = [
@@ -104,29 +107,8 @@ const columns: ColumnDef<Course>[] = [
       return <div className="text-right">{row.getValue("enrollmentCount")}</div>
     },
   },
-  {
-    accessorKey: "startDate",
-    header: "Start Date",
-    cell: ({ row }) => <div>{new Date(row.getValue("startDate")).toLocaleDateString()}</div>,
-  },
-  {
-    accessorKey: "endDate",
-    header: "End Date",
-    cell: ({ row }) => <div>{new Date(row.getValue("endDate")).toLocaleDateString()}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className={`capitalize ${
-        row.getValue("status") === "Active" ? "text-green-600" :
-        row.getValue("status") === "Draft" ? "text-yellow-600" :
-        "text-red-600"
-      }`}>
-        {row.getValue("status")}
-      </div>
-    ),
-  },
+
+ 
   {
     id: "actions",
     enableHiding: false,
@@ -168,28 +150,46 @@ export default function CoursesPage() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [data, setData] = useState<Course[]>([])
+  const [totalPages, setTotalPages] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
 
   const router = useRouter()
+  
+
+  const handleRowClick = (courseId: string) => {
+    router.push(`/admin/courses/${courseId}/edit`)
+  }
+  const fetchCourses = async (page = 1, search = '') => {
+    setIsLoading(true)
+    try {
+      const searchParams = new URLSearchParams({
+        page: page.toString(),
+        limit: '10',
+        search: search
+      })
+
+      const response = await fetch(`/api/admin/courses?${searchParams}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch courses')
+      }
+      const data: APIResponse = await response.json()
+      setData(data.courses)
+      setTotalPages(data.totalPages)
+      setCurrentPage(page)
+    } catch (error) {
+      console.error('Error fetching courses:', error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch courses. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await fetch('/api/admin/courses')
-        if (!response.ok) {
-          throw new Error('Failed to fetch courses')
-        }
-        const courses = await response.json()
-        setData(courses)
-      } catch (error) {
-        console.error('Error fetching courses:', error)
-        toast({
-          title: "Error",
-          description: "Failed to fetch courses. Please try again.",
-          variant: "destructive",
-        })
-      }
-    }
-
     fetchCourses()
   }, [])
 
@@ -211,9 +211,30 @@ export default function CoursesPage() {
       rowSelection,
     },
   })
+  const handlePageChange = (newPage: number) => {
+    const searchValue = table.getColumn("title")?.getFilterValue() as string
+    fetchCourses(newPage, searchValue)
+  }
+  useEffect(() => {
+    const searchValue = table.getColumn("title")?.getFilterValue() as string
+    fetchCourses(1, searchValue)
+  }, [table?.getColumn("title")?.getFilterValue()])
+
+  
 
   const handleBatchDelete = async () => {
-    const selectedIds = Object.keys(rowSelection)
+    const selectedRows = table.getFilteredSelectedRowModel().rows
+    const selectedIds = selectedRows.map(row => row.original.id) 
+    
+    if (selectedIds.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select courses to delete.",
+        variant: "destructive",
+      })
+      return
+    }
+  
     try {
       const response = await fetch('/api/admin/courses/batch-delete', {
         method: 'POST',
@@ -222,24 +243,30 @@ export default function CoursesPage() {
         },
         body: JSON.stringify({ ids: selectedIds }),
       })
+  
+      const data = await response.json()
+  
       if (!response.ok) {
-        throw new Error('Failed to delete courses')
+        throw new Error(data.error || 'Failed to delete courses')
       }
-      setData(prevData => prevData.filter(course => !selectedIds.includes(course.id)))
+  
+      setRowSelection({})
+    
+      fetchCourses(currentPage)
+  
       toast({
         title: "Success",
-        description: "Selected courses have been deleted.",
+        description: `Successfully deleted ${selectedIds.length} course(s).`,
       })
     } catch (error) {
       console.error('Error deleting courses:', error)
       toast({
         title: "Error",
-        description: "Failed to delete courses. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to delete courses. Please try again.",
         variant: "destructive",
       })
     }
   }
-
   return (
     <div className="container mx-auto py-10">
       <div className="flex items-center justify-between mb-4">
@@ -285,49 +312,58 @@ export default function CoursesPage() {
         </DropdownMenu>
       </div>
       <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                onClick={() => handleRowClick(row.original.id)}
+                className="cursor-pointer hover:bg-muted/50"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleRowClick(row.original.id)
+                  }
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
               </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -337,32 +373,36 @@ export default function CoursesPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1 || isLoading}
           >
             Previous
           </Button>
+          <span className="mx-2">
+            Page {currentPage} of {totalPages}
+          </span>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= totalPages || isLoading}
           >
             Next
           </Button>
         </div>
       </div>
+
+      {isLoading && (
+        <div className="flex justify-center items-center h-24">
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      )}
       {Object.keys(rowSelection).length > 0 && (
         <div className="flex justify-end space-x-2 mt-4">
           <Button variant="destructive" onClick={handleBatchDelete}>
             Delete Selected
           </Button>
-          <Button variant="secondary">
-            Update Status
-          </Button>
-          <Button variant="secondary">
-            Update Category
-          </Button>
+         
         </div>
       )}
     </div>

@@ -7,10 +7,7 @@ export async function GET(request: Request) {
   const limit = Number(searchParams.get('limit')) || 10
   const search = searchParams.get('search') || ''
   const category = searchParams.get('category') || ''
-  const status = searchParams.get('status') || ''
- 
-  const minPrice = Number(searchParams.get('minPrice')) || 0
-  const maxPrice = Number(searchParams.get('maxPrice')) || Infinity
+  
 
   const skip = (page - 1) * limit
 
@@ -27,7 +24,7 @@ export async function GET(request: Request) {
             },
             category ? { category: { name: category } } : {},
             
-            { price: { gte: minPrice, lte: maxPrice } },
+            
           ],
         },
         include: {
@@ -53,8 +50,6 @@ export async function GET(request: Request) {
             },
             category ? { category: { name: category } } : {},
             
-         
-            { price: { gte: minPrice, lte: maxPrice } },
           ],
         },
       }),
