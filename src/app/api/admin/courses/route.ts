@@ -82,19 +82,15 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Validate required fields
     if (!body.title || !body.description || !body.category) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-
-    // First, ensure the category exists or create it
     const category = await prisma.category.upsert({
       where: { name: body.category },
       update: {},
       create: { name: body.category },
     });
 
-    // Create the course with the category ID
     const course = await prisma.course.create({
       data: {
         title: body.title,
@@ -105,7 +101,7 @@ export async function POST(request: Request) {
           create: body.lessons?.map((lesson: any) => ({
             title: lesson.title,
             content: lesson.content,
-            duration: Number(lesson.duration),
+          
           })) || [],
         },
       },

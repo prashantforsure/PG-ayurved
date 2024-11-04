@@ -43,18 +43,16 @@ export const authOptions: AuthOptions = {
         });
 
         if (!existingUser) {
-          // Create new user if doesn't exist
+         
           const userCount = await prisma.user.count();
           const newUser = await prisma.user.create({
             data: {
               email: profile.email,
               name: profile.name ?? '',
               image: profile.image ?? '',
-              isAdmin: userCount === 0, // First user becomes an admin
+              isAdmin: userCount === 0, 
             },
           });
-
-          // Create the account link
           if (account) {
             await prisma.account.create({
               data: {
@@ -72,13 +70,13 @@ export const authOptions: AuthOptions = {
             });
           }
         } else {
-          // If user exists but doesn't have a Google account linked
+          
           const hasGoogleAccount = existingUser.accounts.some(
             (acc) => acc.provider === 'google'
           );
 
           if (!hasGoogleAccount && account) {
-            // Link the Google account to the existing user
+          
             await prisma.account.create({
               data: {
                 userId: existingUser.id,
@@ -103,9 +101,7 @@ export const authOptions: AuthOptions = {
       }
     },
     async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
       if (url.startsWith("/")) return `${baseUrl}${url}`
-      // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url
       return baseUrl
     }
