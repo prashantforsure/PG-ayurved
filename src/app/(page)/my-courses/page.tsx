@@ -59,9 +59,9 @@ export default function MyCourses() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50 mt-12">
    
-      <div className="w-full bg-white shadow-sm">
+      <div className="w-full  shadow-sm">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900 text-center bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
             My Learning Journey

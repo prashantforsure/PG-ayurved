@@ -84,7 +84,7 @@ export default function ManageUsers() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen">
+    <div className="container mx-auto px-4 py-8 bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen mt-12">
       <h1 className="text-4xl font-bold mb-8 text-gray-900">Manage Users</h1>
 
       <Card className="mb-8 border border-gray-200 rounded-lg shadow-md overflow-hidden">

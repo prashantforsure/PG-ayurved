@@ -190,12 +190,14 @@ export default  function HomePage({ initialSession }: HomePageProps) {
                         Courses
                       </Button>
                     </Link>
+                    <Link href='/about'>
                     <Button
                       variant="ghost"
                       className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
                     >
                       About
                     </Button>
+                    </Link>
                     <Button
                       variant="ghost"
                       className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
@@ -343,7 +345,7 @@ export default  function HomePage({ initialSession }: HomePageProps) {
                   variant="outline"
                   className="flex items-center"
                 >
-                  <Play className="mr-2 h-4 w-4" />
+                  <Play className="ml-2 h-4 w-4" />
                   Watch Demo
                 </Button></Link>
               </motion.div>

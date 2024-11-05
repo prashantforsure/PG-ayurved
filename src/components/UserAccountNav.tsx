@@ -61,27 +61,13 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/tasks" className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors duration-200">
+          <Link href="/results" className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors duration-200">
           <ListTodo className="h-5 w-5 text-[#A259FF]" />
             
-            <span className="text-sm font-medium text-gray-700">Task List</span>
+            <span className="text-sm font-medium text-gray-700">Results</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/groups" className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors duration-200">
-            <PlusCircle className="h-5 w-5 text-[#1ABCFE]" />
-            <span className="text-sm font-medium text-gray-700">Create Group</span>
-          </Link>
-        </DropdownMenuItem>
-
       
-
-        {/* <DropdownMenuItem asChild>
-          <Link href="/settings" className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors duration-200">
-            <Settings className="h-5 w-5 text-[#1ABCFE]" />
-            <span className="text-sm font-medium text-gray-700">Settings</span>
-          </Link>
-        </DropdownMenuItem> */}
 
         <DropdownMenuSeparator className="my-1 border-gray-100" />
         

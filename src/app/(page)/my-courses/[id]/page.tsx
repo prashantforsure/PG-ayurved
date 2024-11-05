@@ -73,7 +73,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8 mt-12">
       <div className="max-w-4xl mx-auto">
         <Card className="mb-8 overflow-hidden">
           <div className="relative w-full pt-[56.25%]">

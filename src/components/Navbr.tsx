@@ -38,12 +38,15 @@ const Navbr = async () => {
                           Courses
                         </Button>
                       </Link>
+                      <Link href='/about'>
                       <Button
                         variant="ghost"
                         className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
                       >
                         About
                       </Button>
+                      </Link>
+                   
                       <Button
                         variant="ghost"
                         className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
