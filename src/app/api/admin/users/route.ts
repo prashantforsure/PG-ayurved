@@ -1,61 +1,69 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../[...nextauth]/route';
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import prisma from '@/lib/prisma'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { Prisma } from '@prisma/client'
 
-
-export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user.isAdmin) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const searchParams = request.nextUrl.searchParams;
-  const page = parseInt(searchParams.get('page') || '1');
-  const limit = parseInt(searchParams.get('limit') || '10');
-  const search = searchParams.get('search') || '';
-
+export async function GET(req: Request) {
   try {
-    const users = await prisma.user.findMany({
-      where: {
-        OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { email: { contains: search, mode: 'insensitive' } },
-        ],
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        isAdmin: true,
-        createdAt: true,
-        _count: {
-          select: { enrollments: true },
-        },
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-    });
+    const session = await getServerSession(authOptions)
 
-    const totalCount = await prisma.user.count({
-      where: {
-        OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { email: { contains: search, mode: 'insensitive' } },
-        ],
-      },
-    });
+    if (!session || !session.user.isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(req.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const search = searchParams.get('search') || ''
+
+    const skip = (page - 1) * limit
+
+    const where: Prisma.UserWhereInput = search
+      ? {
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: 'insensitive' as Prisma.QueryMode
+              }
+            },
+            {
+              email: {
+                contains: search,
+                mode: 'insensitive' as Prisma.QueryMode
+              }
+            }
+          ]
+        }
+      : {}
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          isAdmin: true,
+          createdAt: true,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.user.count({ where }),
+    ])
 
     return NextResponse.json({
       users,
-      totalCount,
-      currentPage: page,
-      totalPages: Math.ceil(totalCount / limit),
-    });
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    })
   } catch (error) {
-    console.error('Failed to fetch users:', error);
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    console.error('Error fetching users:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
