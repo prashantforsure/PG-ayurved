@@ -1,25 +1,34 @@
-import { getServerSession } from 'next-auth'
-import Link from 'next/link'
+
 import React from 'react'
-import { Button } from './ui/button'
+import { motion, useScroll, useTransform } from 'framer-motion'
 
-import { PlusCircle, Menu } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+
 import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 
-import { UserAccountNav } from './UserAccountNav'
+  PlusCircle,
+  Menu
+} from 'lucide-react'
+import Link from 'next/link'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { UserAccountNav } from '@/components/UserAccountNav'
+import { getServerSession, Session } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
-const Navbar = async () => {
-  const session = await getServerSession(authOptions)
 
+const Navbr = async () => {
+    const session = await getServerSession(authOptions)
+
+    const { scrollY } = useScroll()
+    const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.8])
   return (
-    <div className='fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-100'>
-      
-      <div className="flex justify-between items-center h-16">
+    <div>
+           <motion.nav 
+        style={{ opacity: headerOpacity }}
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-100"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 PG Ayurved.
@@ -32,9 +41,9 @@ const Navbar = async () => {
                 <Button variant="ghost">Resources</Button>
               </div>
             </div>
-        
-        <div className='flex items-center gap-4'>
-        {session?.user.isAdmin ? (
+          
+             <div className='flex items-center gap-4'>
+          {session?.user.isAdmin ? (
             <>
               <div className="hidden md:flex items-center gap-4">
                 <Link href='/admin'>
@@ -95,9 +104,11 @@ const Navbar = async () => {
             </Link>
           )}
         </div>
-      </div>
+          </div>
+        </div>
+      </motion.nav>
     </div>
   )
 }
 
-export default Navbar
+export default Navbr

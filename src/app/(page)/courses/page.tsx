@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Navbr from '@/components/Navbr'
+import Navbar from '@/components/Navbar'
+
 
 
 interface Course {
@@ -20,12 +23,12 @@ interface Course {
   category: string
 }
 
-export default function CoursesPage() {
+export default  function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('title')
   const router = useRouter()
-
+ 
   useEffect(() => {
     fetchCourses()
   }, [])
@@ -66,8 +69,10 @@ export default function CoursesPage() {
   const handleCourseClick = (courseId: string) => {
     router.push(`/courses/${courseId}`)
   }
+ 
   return (
     <div className="container mx-auto py-10 px-4">
+     
       <h1 className="text-4xl font-bold mb-8 text-gray-900">Explore Courses</h1>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
