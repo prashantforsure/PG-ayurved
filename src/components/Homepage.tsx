@@ -178,7 +178,7 @@ export default  function HomePage({ initialSession }: HomePageProps) {
                 <Button variant="ghost"><Link href="/courses">Courses</Link>  
                 </Button>
                 <Button variant="ghost">About</Button>
-                <Button variant="ghost">Community</Button>
+                <Button variant="ghost">Contact</Button>
                 <Button variant="ghost">Resources</Button>
               </div>
             </div>

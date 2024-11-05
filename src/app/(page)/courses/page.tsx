@@ -122,9 +122,7 @@ export default function CoursesPage() {
                   <CardTitle className="text-xl font-bold line-clamp-2 text-gray-900">
                     {course.title}
                   </CardTitle>
-                  <p className="text-sm text-gray-600">
-                    by {course.instructor}
-                  </p>
+                  
                 </CardHeader>
 
                 <CardFooter className="flex items-center justify-between pt-4 border-t border-gray-100">
