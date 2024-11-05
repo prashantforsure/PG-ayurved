@@ -407,10 +407,12 @@ export default  function HomePage({ initialSession }: HomePageProps) {
               </Badge>
               <h2 className="text-4xl font-bold">Popular Medical Courses</h2>
             </div>
+            <Link href="/courses">
             <Button variant="outline">
-              View All Courses
+              View All Courses 
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
+            </Link>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

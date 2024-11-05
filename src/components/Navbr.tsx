@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+
 
 import { Button } from "@/components/ui/button"
 
@@ -12,26 +12,24 @@ import {
 import Link from 'next/link'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { UserAccountNav } from '@/components/UserAccountNav'
-import { getServerSession, Session } from 'next-auth'
+import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 
 const Navbr = async () => {
     const session = await getServerSession(authOptions)
 
-    const { scrollY } = useScroll()
-    const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.8])
   return (
     <div>
-           <motion.nav 
-        style={{ opacity: headerOpacity }}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-100"
+         
+       <div
+        className="top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-100"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                PG Ayurved.
+                <Link href="/">PG Ayurved.</Link>
               </span>
               <div className="hidden md:flex space-x-6">
                 <Button variant="ghost"><Link href="/courses">Courses</Link>  
@@ -106,7 +104,7 @@ const Navbr = async () => {
         </div>
           </div>
         </div>
-      </motion.nav>
+      </div>
     </div>
   )
 }
