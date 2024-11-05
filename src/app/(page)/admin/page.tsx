@@ -7,6 +7,7 @@ import axios from 'axios'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { Loader2 } from 'lucide-react'
 
 interface DashboardData {
   totalUsers: number
@@ -49,7 +50,9 @@ export default function AdminDashboard() {
   }
 
   if (status === 'loading' || !dashboardData) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
+    return  <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
+    <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
+  </div>
   }
 
   if (!session?.user?.isAdmin) {
@@ -58,7 +61,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className='flex justify-between'>
       <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
+      <div className="">
+        <Button onClick={() => router.push('/admin/courses/new')}>Create Course</Button>
+      </div>
+      </div>
+     
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardHeader>

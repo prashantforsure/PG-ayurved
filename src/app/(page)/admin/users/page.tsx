@@ -74,7 +74,7 @@ export default function ManageUsers() {
   if (status === 'loading') {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="mr-2 h-16 w-16 animate-spin text-purple-600" />
+        <Loader2 className="mr-2 h-8 w-8 animate-spin text-purple-600" />
       </div>
     )
   }
