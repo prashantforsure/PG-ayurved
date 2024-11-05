@@ -164,95 +164,132 @@ export default  function HomePage({ initialSession }: HomePageProps) {
   return (
     <div className="min-h-screen bg-white">
      
-      <motion.nav 
-        style={{ opacity: headerOpacity }}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-100 "
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+     <motion.nav
+      style={{ opacity: headerOpacity }}
+      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-100"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+        
+          <div className="flex items-center">
+        
+            <div className="md:hidden mr-4">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+                  <nav className="flex flex-col gap-4 mt-8">
+                    <Link href="/courses">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
+                      >
+                        Courses
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
+                    >
+                      About
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
+                    >
+                      Contact
+                    </Button>
+                    <Link href="https://play.google.com/store/apps/details?id=co.jarvis.pgap">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
+                      >
+                        Mobile App
+                      </Button>
+                    </Link>
+                    
+                    {initialSession?.user.isAdmin && (
+                      <>
+                        <div className="border-t border-gray-200 my-4" />
+                        <Link href="/admin">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start px-6 py-2 text-sm hover:text-[#A259FF] transition-colors"
+                          >
+                            Admin Dashboard
+                          </Button>
+                        </Link>
+                     
+                      </>
+                    )}
+                  </nav>
+                </SheetContent>
+              </Sheet>
+            </div>
+
             <div className="flex items-center space-x-8">
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                PG Ayurved.
+                <Link href="/">PG Ayurved.</Link>
               </span>
               <div className="hidden md:flex space-x-6">
-                <Button variant="ghost"><Link href="/courses">Courses</Link>  
+                <Button variant="ghost">
+                  <Link href="/courses">Courses</Link>
                 </Button>
                 <Button variant="ghost">About</Button>
                 <Button variant="ghost">Contact</Button>
-                <Button variant="ghost">Resources</Button>
+                <Button variant="ghost">
+                  <Link href="https://play.google.com/store/apps/details?id=co.jarvis.pgap">
+                    Mobile App
+                  </Link>
+                </Button>
               </div>
             </div>
-            {/* <div className="flex items-center space-x-4">
-              <Button variant="ghost">Sign In</Button>
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                Get Started
-              </Button>
-            </div> */}
-             <div className='flex items-center gap-4'>
-          {initialSession?.user.isAdmin ? (
-            <>
-              <div className="hidden md:flex items-center gap-4">
-                <Link href='/admin'>
-                  <Button 
-                    variant="ghost" 
-                    className=' px-6 py-2 text-sm hover:text-[#A259FF] transition-colors text-black border border-slate-900'
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {initialSession ? (
+              <>
                
-              </div>
-              <div className="md:hidden hidden">
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Menu className="h-5 w-5" />
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                    <nav className="flex flex-col gap-4">
-                      <Link href='/dashboard'>
-                        <Button 
-                          variant="ghost" 
-                          className='w-full justify-start rounded-full px-6 py-2 text-sm hover:text-[#A259FF] transition-colors text-black border border-slate-900'
-                        >
-                          Dashboard
-                        </Button>
-                      </Link>
-                      <Link href='/groups'>
-                        <Button 
-                          variant="ghost" 
-                          className='w-full justify-start  px-6 py-2 text-sm hover:text-[#1ABCFE] transition-colors text-black border border-slate-900 flex items-center gap-2'
-                        >
-                          <PlusCircle className="h-4 w-4" />
-                          Create Group
-                        </Button>
-                      </Link>
-                    </nav>
-                  </SheetContent>
-                </Sheet>
-              </div>
-              <UserAccountNav user={{
-                ...initialSession.user,
-                image: initialSession.user.image ?? "",
-                name: initialSession.user.name ?? "",   
-                email: initialSession.user.email ?? ""  
-              }} />
-            </>
-          ) : (
-            <Link href='/auth/signin'>
-              <Button 
-                variant="ghost" 
-                className=' px-6 py-2 text-white bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 transition-all duration-300 ease-in-out hover:shadow-[0_0_15px_rgba(236,72,153,0.5)] hover:-translate-y-0.5'
-              >
-                Sign In
-              </Button>
-            </Link>
-          )}
-        </div>
+                {initialSession.user.isAdmin && (
+                  <div className="hidden md:flex items-center gap-4">
+                    <Link href="/admin">
+                      <Button
+                        variant="ghost"
+                        className="px-6 py-2 text-sm hover:text-[#A259FF] transition-colors text-black border border-slate-900"
+                      >
+                        Admin Dashboard
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+
+                <UserAccountNav
+                  user={{
+                    ...initialSession.user,
+                    image: initialSession.user.image ?? "",
+                    name: initialSession.user.name ?? "",
+                    email: initialSession.user.email ?? ""
+                  }}
+                />
+              </>
+            ) : (
+              
+              <Link href="/auth/signin">
+                <Button
+                  variant="ghost"
+                  className="px-6 py-2 text-white bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 transition-all duration-300 ease-in-out hover:shadow-[0_0_15px_rgba(236,72,153,0.5)] hover:-translate-y-0.5"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
-      </motion.nav>
+      </div>
+    </motion.nav>
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-24 overflow-hidden">

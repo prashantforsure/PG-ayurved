@@ -60,7 +60,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 mt-10">
       <div className='flex justify-between'>
       <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
       <div className="">
