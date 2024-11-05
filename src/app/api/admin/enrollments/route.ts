@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import prisma from '@/lib/prisma'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { Prisma } from '@prisma/client'
 
 export async function GET(req: Request) {
   try {
@@ -18,12 +19,22 @@ export async function GET(req: Request) {
 
     const skip = (page - 1) * limit
 
-    const where = search
+    const where: Prisma.EnrollmentWhereInput = search
       ? {
           OR: [
-            { user: { name: { contains: search, mode: 'insensitive' } } },
-            { user: { email: { contains: search, mode: 'insensitive' } } },
-            { course: { title: { contains: search, mode: 'insensitive' } } },
+            {
+              user: {
+                OR: [
+                  { name: { contains: search, mode: 'insensitive' } },
+                  { email: { contains: search, mode: 'insensitive' } },
+                ],
+              },
+            },
+            {
+              course: {
+                title: { contains: search, mode: 'insensitive' },
+              },
+            },
           ],
         }
       : {}

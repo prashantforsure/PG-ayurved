@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
     const courseId = body.courseId;
     const userId = session.user.id;
 
-    // Get course details
     const course = await prisma.course.findUnique({
       where: { id: courseId },
     });
@@ -28,8 +27,6 @@ export async function POST(req: NextRequest) {
     if (!course) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
-
-    // Check if user is already enrolled
     const existingEnrollment = await prisma.enrollment.findUnique({
       where: {
         userId_courseId: {
@@ -45,14 +42,11 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Create Razorpay order with a shorter receipt
     const amount = Math.round(course.price * 100);
     const currency = "INR";
     
-    // Generate a shorter receipt ID (max 40 chars)
-    const shortCourseId = courseId.slice(-8); // Take last 8 chars of courseId
-    const timestamp = Date.now().toString().slice(-8); // Take last 8 digits of timestamp
+    const shortCourseId = courseId.slice(-8); 
+    const timestamp = Date.now().toString().slice(-8); 
     const receipt = `rcpt_${shortCourseId}_${timestamp}`;
 
     const order = await razorpay.orders.create({
@@ -61,7 +55,6 @@ export async function POST(req: NextRequest) {
       receipt,
     });
 
-    // Create enrollment and payment records within a transaction
     const result = await prisma.$transaction(async (prisma) => {
       const enrollment = await prisma.enrollment.create({
         data: {
@@ -95,7 +88,6 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("Error creating order:", error);
     
-    // More detailed error response
     return NextResponse.json(
       { 
         error: "Failed to create order",
