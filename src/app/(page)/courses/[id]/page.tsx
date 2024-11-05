@@ -7,6 +7,7 @@ import { ArrowLeft, BookOpen, Clock, User, Check } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BuyButton } from '@/components/BuyButton'
 
 interface Lesson {
   id: string
@@ -107,7 +108,8 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
               <div className="mb-6">
                 <span className="text-3xl font-bold text-gray-900">${course.price.toFixed(2)}</span>
               </div>
-              <Button className="w-full mb-4">Enroll Now</Button>
+              {/* <Button className="w-full mb-4">Enroll Now</Button> */}
+              <BuyButton courseId={course.id} />
               <p className="text-sm text-gray-500 mb-6">30-Day Money-Back Guarantee</p>
               <div className="space-y-4">
                 {course.lessons.map((lesson, index) => (
