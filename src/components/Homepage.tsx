@@ -64,17 +64,17 @@ const features = [
   {
     icon: GraduationCap,
     title: "Expert-Led Education",
-    description: "Learn from world-renowned medical professionals with decades of experience."
+    description: "Learn from Top medical professionals with decade of experience."
   },
   {
     icon: Globe,
-    title: "Global Community",
-    description: "Join a worldwide network of medical students and professionals."
+    title: "Community",
+    description: "Join a network of medical students and professionals."
   },
   {
     icon: Zap,
     title: "Interactive Learning",
-    description: "Engage with 3D models, case studies, and real-time simulations."
+    description: "Engage with Live classes, case studies, and easy to remember tricks."
   },
   {
     icon: Award,
@@ -122,20 +122,20 @@ const AnimatedCard = ({ children }) => (
 
 const testimonials = [
   {
-    name: "Dr. Sarah Johnson",
-    role: "Cardiologist",
+    name: "Dr. Dhrub Sutariya",
+    role: "AIR 13 (AIAPGET)",
     content: "This platform revolutionized my medical education. The interactive content and expert instructors made complex topics easy to understand.",
     avatar: "/placeholder.svg?height=80&width=80"
   },
   {
-    name: "James Lee",
-    role: "Medical Student",
+    name: "Dr. Krishna Thummar",
+    role: "AIR 28 (AIAPGET)",
     content: "The exam preparation resources are top-notch. I felt fully prepared for my boards thanks to the comprehensive materials and practice questions.",
     avatar: "/placeholder.svg?height=80&width=80"
   },
   {
-    name: "Dr. Emily Chen",
-    role: "Pediatrician",
+    name: "Dr. Akshar Patel",
+    role: "AIR 54 (AIAPGET)",
     content: "The clinical case studies were invaluable in bridging the gap between theory and practice. It's a must-have resource for any medical professional.",
     avatar: "/placeholder.svg?height=80&width=80"
   }
@@ -166,7 +166,7 @@ export default  function HomePage({ initialSession }: HomePageProps) {
      
       <motion.nav 
         style={{ opacity: headerOpacity }}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-100"
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-100 "
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -397,7 +397,6 @@ export default  function HomePage({ initialSession }: HomePageProps) {
         </div>
       </section>
 
-      {/* Popular Courses */}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-12">
@@ -464,7 +463,6 @@ export default  function HomePage({ initialSession }: HomePageProps) {
         </div>
       </section>
 
-{/* about educators */}
    <section className='py-24 bg-gray-50'>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div className=' justify-between items-end mb-12'>
@@ -474,29 +472,43 @@ export default  function HomePage({ initialSession }: HomePageProps) {
               </Badge>
               <h2 className="text-4xl font-bold">Top Ayurved Expertise</h2>
             </div>
-        <img 
-                  src="" 
-                  alt="Medical Education" 
-                  width="300"
-                  height="300"
-                  
-                  className="w-32 h-32 md:w-52 md:h-52 rounded-lg float-left mr-8 mb-8 object-center object-cover"
-                />
-                <p className='mb-4 text-base-content md:text-lg font-medium text-gray-600'>Hello Medicos,This is PG Ayurved Prayojnam. </p>
-                <p className='mb-5 text-gray-600'>This is the initiative by <span className='font-semibold'>PG Ayurved Prayojanam</span> to reach out to aspirants looking <br /> to prepare for AIAPGET
-                 (M.D./M.S.), UPSC, PSC, PhD exams.</p>
-                {/* <p className='mb-5'><span className='font-bold'>Preparation's By</span>  - Live Online classes, Recorded classes through the integrative classes on PG Ayurved Prayojanam APP & Offline classes</p> */}
-                <div className='gap-8  mt-32'></div>
-                <p className='mb-3  font-semibold text-gray-600'>Mentors</p>
-                <p className='mb-3 text-gray-600'>1. Dr. Abhilasha Patel, MD - Panchkarma <br />
-                 for बृहद त्रयी & लघु त्रयी Samhita.
-                </p>
-                <p className=' text-gray-600'>2. Dr. R.K. Patel, MD - Panchkarma, PhD - Scholar
-                Govt Medical Officer - MP Govt. <br />
-                for 1st, 2nd, 3rd & 4th years Subjects preparation
-                  
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              
+                <AnimatedCard >
+                  <Card className="h-full">
+                    <CardHeader>
+                      <div className="flex items-center">
+                        <img src='' alt="Dr. R.K. Patel" className="w-16 h-16 rounded-full mr-4" />
+                        <div>
+                          <CardTitle className="text-lg font-semibold">Dr. R.K. Patel</CardTitle>
+                          <CardDescription>MD - Panchkarma, PhD - Scholar, M.P. Govt. Medical Officer</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">1st, 2nd, 3rd & 4th years subject preparation</p>
+                    </CardContent>
+                  </Card>
+                </AnimatedCard>
+                
+                <AnimatedCard >
+                  <Card className="h-full">
+                    <CardHeader>
+                      <div className="flex items-center">
+                        <img src='' alt="Dr. Abhilasha Patel" className="w-16 h-16 rounded-full mr-4" />
+                        <div>
+                          <CardTitle className="text-lg font-semibold">Dr. Abhilasha Patel</CardTitle>
+                          <CardDescription>MD - Panchkarma, M.P. Govt. Medical Officer</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">बृहद त्रयी & लघु त्रयी Samhita Preparation</p>
+                    </CardContent>
+                  </Card>
+                </AnimatedCard>
+            </div>
 
-</p>
     </div>
     </div>
    </section>
@@ -545,7 +557,7 @@ export default  function HomePage({ initialSession }: HomePageProps) {
             <div>
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-blue-600">Courses</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-blue-600"><Link href='/courses'>Courses</Link> </a></li>
                 <li><a href="#" className="text-gray-600 hover:text-blue-600">About Us</a></li>
                 <li><a href="#" className="text-gray-600 hover:text-blue-600">Contact</a></li>
                 <li><a href="#" className="text-gray-600 hover:text-blue-600">FAQs</a></li>

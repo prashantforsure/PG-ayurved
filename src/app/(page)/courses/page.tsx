@@ -54,8 +54,8 @@ export default function CoursesPage() {
     })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
-      {/* Header Section */}
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50 mt-12">
+
       <div className="w-full  shadow-sm">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
@@ -67,7 +67,6 @@ export default function CoursesPage() {
         </div>
       </div>
 
-      {/* Search and Filter Section */}
       <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row gap-4 items-center  p-4 rounded-lg shadow-sm">
           <div className="relative flex-1">
@@ -92,7 +91,6 @@ export default function CoursesPage() {
         </div>
       </div>
 
-      {/* Courses Grid */}
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredAndSortedCourses.map((course) => (

@@ -61,7 +61,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50 mt-10">
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <Button 
           variant="ghost" 
@@ -72,9 +72,9 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
+
           <div className="lg:col-span-2 space-y-8">
-            {/* Course Header */}
+       
             <Card className="overflow-hidden border-0 shadow-lg">
               <div className="relative aspect-video">
                 {course.thumbnailUrl ? (
@@ -131,7 +131,6 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
               </CardContent>
             </Card>
 
-            {/* Course Content */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
@@ -170,13 +169,12 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
             </Card>
           </div>
 
-          {/* Sidebar */}
           <div className="lg:col-span-1">
             <Card className="sticky top-8 border-0 shadow-lg">
               <CardContent className="p-6">
                 <div className="mb-6">
                   <span className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                    ${course.price.toFixed(2)}
+                  ₹{course.price.toFixed(2)}
                   </span>
                 </div>
                 <BuyButton courseId={course.id} />
