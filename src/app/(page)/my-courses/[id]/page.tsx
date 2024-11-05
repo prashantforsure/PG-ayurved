@@ -1,18 +1,21 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, BookOpen, Clock, User } from 'lucide-react'
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+import axios from 'axios'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Loader2, BookOpen, Clock, CheckCircle2, PlayCircle } from 'lucide-react'
+import { toast } from '@/hooks/use-toast'
+import { Progress } from '@/components/ui/progress'
 
 interface Lesson {
   id: string
   title: string
+  description: string
   duration: number
+  isCompleted: boolean
 }
 
 interface CourseDetail {
@@ -20,85 +23,111 @@ interface CourseDetail {
   title: string
   description: string
   thumbnailUrl: string
-  instructor: {
-    name: string
-    avatarUrl: string
-  }
-  lessons: Lesson[]
+  totalLessons: number
   totalDuration: number
   progress: number
+  lessons: Lesson[]
 }
 
 export default function CourseDetailPage({ params }: { params: { id: string } }) {
-  const [course, setCourse] = useState<CourseDetail | null>(null)
+  const { data: session, status } = useSession()
   const router = useRouter()
+  const [course, setCourse] = useState<CourseDetail | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetchCourseDetail()
-  }, [])
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+    } else if (status === 'authenticated') {
+      fetchCourseDetail()
+    }
+  }, [status, params.id])
 
   const fetchCourseDetail = async () => {
     try {
-      const response = await axios.get(`/api/my-courses/${params.id}`)
+      setIsLoading(true)
+      const response = await axios.get<CourseDetail>(`/api/my-courses/${params.id}`)
       setCourse(response.data)
     } catch (error) {
-      console.error('Error fetching course detail:', error)
+      console.error('Failed to fetch course details:', error)
+      toast({
+        title: "Error",
+        description: "Failed to load course details",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
+  if (status === 'loading' || isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+        <Loader2 className="h-16 w-16 animate-spin text-purple-600" />
+      </div>
+    )
+  }
+
   if (!course) {
-    return <div>Loading...</div>
+    return <div className="text-center text-gray-600">Course not found.</div>
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-4">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Back to My Courses
-      </Button>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <Card className="mb-8 overflow-hidden">
+          <div className="relative w-full pt-[56.25%]">
+            <img 
+              src={course.thumbnailUrl} 
+              alt={course.title}
+              className="absolute top-0 left-0 w-full h-full object-cover"
+            />
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black/20" />
+          </div>
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold text-gray-900">{course.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">{course.description}</p>
+            <div className="flex flex-wrap gap-4 mb-4">
+              <div className="flex items-center text-sm text-gray-500">
+                <BookOpen className="h-5 w-5 mr-2 text-purple-600" />
+                <span>{course.totalLessons} lessons</span>
+              </div>
+              
+          
+            </div>
+            <Progress value={course.progress} className="w-full h-2 bg-gray-200" />
+          </CardContent>
+        </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <Card>
-            <CardHeader>
-              <img src={course.thumbnailUrl} alt={course.title} className="w-full h-64 object-cover rounded-t-lg" />
-            </CardHeader>
-            <CardContent>
-              <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
-              <p className="text-gray-600 mb-4">{course.description}</p>
-              <div className="flex items-center mb-4">
-                <User className="mr-2 h-4 w-4" />
-                <span className="text-sm text-gray-600">Instructor: {course.instructor.name}</span>
-              </div>
-              <div className="flex items-center mb-4">
-                <Clock className="mr-2 h-4 w-4" />
-                <span className="text-sm text-gray-600">Total Duration: {course.totalDuration} minutes</span>
-              </div>
-              <div className="flex items-center mb-4">
-                <BookOpen className="mr-2 h-4 w-4" />
-                <span className="text-sm text-gray-600">Lessons: {course.lessons.length}</span>
-              </div>
-              <div>
-                <span className="text-sm text-gray-600">Progress: {course.progress}%</span>
-                <Progress value={course.progress} className="mt-2" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Lessons</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {course.lessons.map((lesson, index) => (
-                <div key={lesson.id} className="mb-4">
-                  <h3 className="font-semibold">{index + 1}. {lesson.title}</h3>
-                  <p className="text-sm text-gray-600">{lesson.duration} minutes</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Course Content</h2>
+        <div className="space-y-4">
+          {course.lessons.map((lesson, index) => (
+            <Card key={lesson.id} className="overflow-hidden transition-all duration-300 hover:shadow-md">
+              <CardHeader className="bg-white p-4 flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                    {index + 1}
+                  </div>
+                  <CardTitle className="text-lg font-semibold text-gray-900">{lesson.title}</CardTitle>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+                
+              </CardHeader>
+              <CardContent className="p-4">
+                <p className="text-gray-600 text-sm mb-4">{lesson.description}</p>
+                <div className="flex justify-between items-center">
+          
+                  {lesson.isCompleted && (
+                    <span className="text-green-500 flex items-center">
+                      <CheckCircle2 className="h-4 w-4 mr-1" />
+                      Completed
+                    </span>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </div>

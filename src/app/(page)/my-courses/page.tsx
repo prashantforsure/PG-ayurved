@@ -1,97 +1,108 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { Search, ChevronDown } from 'lucide-react'
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import axios from 'axios'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Loader2, BookOpen, Clock, CheckCircle2 } from 'lucide-react'
+import { toast } from '@/hooks/use-toast'
 
 interface Course {
   id: string
   title: string
+  description: string
   thumbnailUrl: string
-  latestLesson: {
-    id: string
-    title: string
-  }
+  totalLessons: number
+  totalDuration: number
+  progress: number
 }
 
-export default function MyCoursesPage() {
-  const [courses, setCourses] = useState<Course[]>([])
-  const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('title')
+export default function MyCourses() {
+  const { data: session, status } = useSession()
   const router = useRouter()
+  const [courses, setCourses] = useState<Course[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetchCourses()
-  }, [])
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+    } else if (status === 'authenticated') {
+      fetchCourses()
+    }
+  }, [status])
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('/api/my-courses')
+      setIsLoading(true)
+      const response = await axios.get<Course[]>('/api/my-courses')
       setCourses(response.data)
     } catch (error) {
-      console.error('Error fetching courses:', error)
+      console.error('Failed to fetch courses:', error)
+      toast({
+        title: "Error",
+        description: "Failed to load your courses",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const filteredAndSortedCourses = courses
-    .filter(course => course.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    .sort((a, b) => a.title.localeCompare(b.title))
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value)
-  }
-
-  const handleSortChange = (value: string) => {
-    setSortBy(value)
-  }
-
-  const handleCourseClick = (courseId: string) => {
-    router.push(`/my-courses/${courseId}`)
+  if (status === 'loading' || isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+        <Loader2 className="h-16 w-16 animate-spin text-purple-600" />
+      </div>
+    )
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-8">My Courses</h1>
-
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative w-64">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Search courses..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="pl-10"
-          />
-        </div>
-        <Select onValueChange={handleSortChange} value={sortBy}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="title">Course Name</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredAndSortedCourses.map(course => (
-          <Card key={course.id} className="flex flex-col cursor-pointer" onClick={() => handleCourseClick(course.id)}>
-            <CardHeader>
-              <img src={course.thumbnailUrl} alt={course.title} className="w-full h-48 object-cover rounded-t-lg" />
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <CardTitle className="mb-2">{course.title}</CardTitle>
-              <p className="text-sm text-gray-600">Latest lesson: {course.latestLesson.title}</p>
-            </CardContent>
-          </Card>
-        ))}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">My Courses</h1>
+        {courses.length === 0 ? (
+          <div className="text-center text-gray-600">
+            <p>You are not enrolled in any courses yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {courses.map((course) => (
+              <Card 
+                key={course.id} 
+                className="flex flex-col bg-white overflow-hidden transition-all duration-300 hover:shadow-lg h-[400px]"
+              >
+                <div className="relative w-full pt-[56.25%]">
+                  <img 
+                    src={course.thumbnailUrl} 
+                    alt={course.title}
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black/20" />
+                </div>
+                <CardHeader className="flex-none">
+                  <CardTitle className="text-xl font-bold text-gray-900 line-clamp-2">
+                    {course.title}
+                  </CardTitle>
+                  <p className="text-sm text-gray-500">{course.description}</p>
+                </CardHeader>
+                
+                <CardFooter className="flex-none border-t border-gray-100 p-4">
+                  <div className="w-full space-y-4">
+                  
+                    <Button 
+                      onClick={() => router.push(`/my-courses/${course.id}`)}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold transition duration-300 ease-in-out transform hover:-translate-y-0.5"
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

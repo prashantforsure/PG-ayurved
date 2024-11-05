@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server'
-import  prisma  from '@/lib/prisma'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../auth/[...nextauth]/route'
+import prisma from '@/lib/prisma'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
-
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions)
 
@@ -20,27 +19,34 @@ export async function GET() {
         course: {
           include: {
             lessons: {
-             
-              take: 1,
+              select: {
+                id: true,
+                
+              },
             },
           },
         },
       },
     })
 
-    const formattedCourses = enrolledCourses.map(enrollment => ({
-      id: enrollment.course.id,
-      title: enrollment.course.title,
+    const formattedCourses = enrolledCourses.map((enrollment) => {
+      const totalLessons = enrollment.course.lessons.length
+    
       
-      latestLesson: enrollment.course.lessons[0] ? {
-        id: enrollment.course.lessons[0].id,
-        title: enrollment.course.lessons[0].title,
-      } : null,
-    }))
+      return {
+        id: enrollment.course.id,
+        title: enrollment.course.title,
+        description: enrollment.course.description,
+        thumbnailUrl: enrollment.course.thumbnail,
+        totalLessons,
+        
+        
+      }
+    })
 
     return NextResponse.json(formattedCourses)
   } catch (error) {
-    console.error('Failed to fetch enrolled courses:', error)
+    console.error('Error fetching enrolled courses:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
