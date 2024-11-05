@@ -39,9 +39,9 @@ export default  function CoursesPage() {
       const formattedCourses = response.data.map((course: any) => ({
         id: course.id,
         title: course.title,
-        thumbnailUrl: course.thumbnail || '/placeholder.jpg', // Use a placeholder if thumbnail is null
+        thumbnailUrl: course.thumbnail || '/placeholder.jpg',
         price: course.price,
-        instructor: 'John Doe', // Assuming all courses have the same instructor
+        instructor: 'John Doe', 
         category: course.category.name,
       }))
       setCourses(formattedCourses)
