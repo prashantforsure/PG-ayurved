@@ -51,7 +51,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container mx-auto py-10 px-4">
+    <div className="container mx-auto py-10 px-4 mt-12">
       <Card className="max-w-3xl mx-auto">
         <CardHeader className="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6">
           <Avatar className="w-24 h-24">
@@ -83,10 +83,7 @@ export default function ProfilePage() {
                 <span className="text-gray-600">Enrolled Courses</span>
                 <span className="font-semibold">{profile.enrolledCourses}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Completed Courses</span>
-                <span className="font-semibold">{profile.completedCourses}</span>
-              </div>
+            
             </div>
           </div>
         </CardContent>

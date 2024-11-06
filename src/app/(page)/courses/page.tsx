@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import { Search, BookOpen, Clock, Users, ChevronDown } from 'lucide-react'
+import { Search, BookOpen, Clock, Users, ChevronDown, ArrowLeft } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -55,7 +55,13 @@ export default function CoursesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50 mt-12">
-
+      <Button 
+          variant="ghost" 
+          onClick={() => router.back()} 
+          className=" text-gray-600 mt-7 hover:text-gray-900 hover:bg-white/50"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Courses
+        </Button>
       <div className="w-full  shadow-sm">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
@@ -125,7 +131,7 @@ export default function CoursesPage() {
 
                 <CardFooter className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <span className="text-lg font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                    ${course.price.toFixed(2)}
+                  ₹{course.price.toFixed(2)}
                   </span>
                   <Button
                     onClick={() => router.push(`/courses/${course.id}`)}

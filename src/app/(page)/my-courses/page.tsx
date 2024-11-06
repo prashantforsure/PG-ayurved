@@ -53,8 +53,14 @@ export default function MyCourses() {
   if (status === 'loading' || isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
-        <Loader2 className="h-16 w-16 animate-spin text-violet-600" />
+      <div className="animate-pulse flex space-x-4">
+        <div className="h-12 w-12 rounded-full bg-violet-200"></div>
+        <div className="space-y-3">
+          <div className="h-4 w-24 bg-violet-200 rounded"></div>
+          <div className="h-4 w-36 bg-violet-200 rounded"></div>
+        </div>
       </div>
+    </div>
     )
   }
 

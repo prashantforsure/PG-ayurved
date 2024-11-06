@@ -552,7 +552,6 @@ export default  function HomePage({ initialSession }: HomePageProps) {
     </div>
    </section>
 
-   {/* social proof */}
    <section className="py-24">
           <div className="max-w-6xl mx-auto px-4">
           <div>
@@ -585,7 +584,7 @@ export default  function HomePage({ initialSession }: HomePageProps) {
           </div>
         </section>
 
-      {/* Footer */}
+     
       <footer className="bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8">
@@ -596,20 +595,13 @@ export default  function HomePage({ initialSession }: HomePageProps) {
             <div>
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-blue-600"><Link href='/courses'>Courses</Link> </a></li>
-                <li><a href="#" className="text-gray-600 hover:text-blue-600">About Us</a></li>
+                <li><Link href='/courses' className="text-gray-600 hover:text-blue-600">Courses</Link> </li>
+                <li><Link href='/about' className="text-gray-600 hover:text-blue-600">About Us</Link> </li>
                 <li><a href="#" className="text-gray-600 hover:text-blue-600">Contact</a></li>
                 <li><a href="#" className="text-gray-600 hover:text-blue-600">FAQs</a></li>
               </ul>
             </div>
-            {/* <div>
-              <h3 className="text-lg font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-blue-600">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-blue-600">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-blue-600">Cookie Policy</a></li>
-              </ul>
-            </div> */}
+         
             <div>
               <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
               <div className="flex space-x-4">

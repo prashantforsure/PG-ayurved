@@ -7,7 +7,7 @@ import { Lesson } from '@prisma/client'
 interface FormattedLesson {
   id: string
   title: string
-  description: string | null
+  content: string | null
 }
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
@@ -47,7 +47,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     const formattedLessons = enrollment.course.lessons.map((lesson: Lesson): FormattedLesson => ({
       id: lesson.id,
       title: lesson.title,
-      description: lesson.content, 
+      content: lesson.content, 
     }))
 
     const courseDetail = {

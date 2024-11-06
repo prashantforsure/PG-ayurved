@@ -13,9 +13,7 @@ import { Progress } from '@/components/ui/progress'
 interface Lesson {
   id: string
   title: string
-  description: string
-  duration: number
-  isCompleted: boolean
+  content: string
 }
 
 interface CourseDetail {
@@ -62,9 +60,15 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
 
   if (status === 'loading' || isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-        <Loader2 className="h-16 w-16 animate-spin text-purple-600" />
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
+      <div className="animate-pulse flex space-x-4">
+        <div className="h-12 w-12 rounded-full bg-violet-200"></div>
+        <div className="space-y-3">
+          <div className="h-4 w-24 bg-violet-200 rounded"></div>
+          <div className="h-4 w-36 bg-violet-200 rounded"></div>
+        </div>
       </div>
+    </div>
     )
   }
 
@@ -97,7 +101,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
               
           
             </div>
-            <Progress value={course.progress} className="w-full h-2 bg-gray-200" />
+           
           </CardContent>
         </Card>
 
@@ -115,16 +119,8 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                 
               </CardHeader>
               <CardContent className="p-4">
-                <p className="text-gray-600 text-sm mb-4">{lesson.description}</p>
-                <div className="flex justify-between items-center">
-          
-                  {lesson.isCompleted && (
-                    <span className="text-green-500 flex items-center">
-                      <CheckCircle2 className="h-4 w-4 mr-1" />
-                      Completed
-                    </span>
-                  )}
-                </div>
+                <p className="text-gray-600 text-sm mb-4">{lesson.content}</p>
+               
               </CardContent>
             </Card>
           ))}

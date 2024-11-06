@@ -18,11 +18,7 @@ interface UserSettings {
   name: string
   email: string
   avatarUrl: string
-  bio: string
-  notifications: {
-    email: boolean
-    push: boolean
-  }
+ 
 }
 
 export default function SettingsPage() {
@@ -52,17 +48,7 @@ export default function SettingsPage() {
     }
   }
 
-  const handleNotificationChange = (type: 'email' | 'push') => {
-    if (settings) {
-      setSettings({
-        ...settings,
-        notifications: {
-          ...settings.notifications,
-          [type]: !settings.notifications[type]
-        }
-      })
-    }
-  }
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -83,9 +69,17 @@ export default function SettingsPage() {
   }
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-64">
-    <Loader2 className="h-8 w-8 animate-spin text-[#A259FF]" />
-   </div>
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
+      <div className="animate-pulse flex space-x-4">
+        <div className="h-12 w-12 rounded-full bg-violet-200"></div>
+        <div className="space-y-3">
+          <div className="h-4 w-24 bg-violet-200 rounded"></div>
+          <div className="h-4 w-36 bg-violet-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+    )
   }
 
   if (!settings) {
@@ -93,7 +87,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container mx-auto py-10 px-4">
+    <div className="container mx-auto py-10 px-4 mt-12">
       <h1 className="text-3xl font-bold mb-8">Account Settings</h1>
       <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl">
         <Card>
@@ -128,46 +122,11 @@ export default function SettingsPage() {
                 className="max-w-md"
               />
             </div>
-            <div className="space-y-2">
-              <label htmlFor="bio" className="text-sm font-medium text-gray-700">Bio</label>
-              <Textarea
-                id="bio"
-                name="bio"
-                value={settings.bio}
-                onChange={handleInputChange}
-                className="max-w-md"
-              />
-            </div>
+          
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold">Notifications</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Mail className="w-5 h-5 text-gray-600" />
-                <span>Email Notifications</span>
-              </div>
-              <Switch
-                checked={settings.notifications.email}
-                onCheckedChange={() => handleNotificationChange('email')}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Bell className="w-5 h-5 text-gray-600" />
-                <span>Push Notifications</span>
-              </div>
-              <Switch
-                checked={settings.notifications.push}
-                onCheckedChange={() => handleNotificationChange('push')}
-              />
-            </div>
-          </CardContent>
-        </Card>
+       
 
         <Card>
           <CardHeader>

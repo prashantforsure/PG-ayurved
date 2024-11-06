@@ -55,7 +55,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/dashboard" className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors duration-200">
+          <Link href="/courses" className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors duration-200">
             <Rss className="h-5 w-5 text-[#1ABCFE]" />
             <span className="text-sm font-medium text-gray-700">Courses List</span>
           </Link>
