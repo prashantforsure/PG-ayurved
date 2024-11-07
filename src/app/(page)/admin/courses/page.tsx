@@ -118,25 +118,26 @@ const columns: ColumnDef<Course>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="h-8 w-8 p-0 text-[#475569] hover:bg-muted">
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="bg-white shadow-md rounded-md">
+            <DropdownMenuLabel className="text-[#475569] font-medium">Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(course.id)}
+              className="hover:bg-muted"
             >
               Copy course ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View enrollments</DropdownMenuItem>
-            <DropdownMenuItem>View revenue</DropdownMenuItem>
-            <DropdownMenuItem>Toggle status</DropdownMenuItem>
-            <DropdownMenuItem>Duplicate course</DropdownMenuItem>
-            <DropdownMenuItem>Edit course</DropdownMenuItem>
-            <DropdownMenuItem>Delete course</DropdownMenuItem>
+            <DropdownMenuSeparator className="border-gray-200" />
+            <DropdownMenuItem className="hover:bg-muted">View enrollments</DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-muted">View revenue</DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-muted">Toggle status</DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-muted">Duplicate course</DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-muted">Edit course</DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-muted text-red-600">Delete course</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -268,10 +269,10 @@ export default function CoursesPage() {
     }
   }
   return (
-    <div className="container mx-auto py-10 mt-10">
+    <div className="container mx-auto py-10 mt-10 bg-[#F6F9FC] text-[#334155]">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold">Manage Courses</h1>
-        <Button onClick={() => router.push('/admin/courses/new')}>
+        <Button onClick={() => router.push('/admin/courses/new')} className="bg-[#0EA5E9] text-white hover:bg-[#0c87c0] focus:ring-[#0EA5E9]">
           <Plus className="mr-2 h-4 w-4" /> Add New Course
         </Button>
       </div>
@@ -282,15 +283,15 @@ export default function CoursesPage() {
           onChange={(event) =>
             table.getColumn("title")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm focus:ring-[#0EA5E9] focus:border-[#0EA5E9]"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-auto bg-gray-100 hover:bg-gray-200 focus:ring-[#0EA5E9]">
               Columns <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="bg-white shadow-md rounded-md">
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
@@ -298,7 +299,7 @@ export default function CoursesPage() {
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
-                    className="capitalize"
+                    className="capitalize hover:bg-muted"
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) =>
                       column.toggleVisibility(!!value)
@@ -311,7 +312,7 @@ export default function CoursesPage() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border bg-white">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -375,6 +376,7 @@ export default function CoursesPage() {
             size="sm"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1 || isLoading}
+            className="bg-gray-100 hover:bg-gray-200 focus:ring-[#0EA5E9]"
           >
             Previous
           </Button>
@@ -386,6 +388,7 @@ export default function CoursesPage() {
             size="sm"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= totalPages || isLoading}
+            className="bg-gray-100 hover:bg-gray-200 focus:ring-[#0EA5E9]"
           >
             Next
           </Button>
@@ -393,13 +396,13 @@ export default function CoursesPage() {
       </div>
 
       {isLoading && (
-        <div className="flex justify-center items-center h-24">
-          <div className="text-muted-foreground">Loading...</div>
+        <div className="flex justify-center items-center h-24 text-muted-foreground">
+          Loading...
         </div>
       )}
       {Object.keys(rowSelection).length > 0 && (
         <div className="flex justify-end space-x-2 mt-4">
-          <Button variant="destructive" onClick={handleBatchDelete}>
+          <Button variant="destructive" onClick={handleBatchDelete} className="bg-red-600 text-white hover:bg-red-700 focus:ring-red-600">
             Delete Selected
           </Button>
          
