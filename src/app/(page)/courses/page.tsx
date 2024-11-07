@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
@@ -18,7 +17,7 @@ interface Course {
   category: string
 }
 
-export default function CoursesPage() {
+export default function RedesignedCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('title')
@@ -54,54 +53,51 @@ export default function CoursesPage() {
     })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50 mt-12">
-      <Button 
+    <div className="min-h-screen bg-gray-50 pt-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Button 
           variant="ghost" 
           onClick={() => router.back()} 
-          className=" text-gray-600 mt-7 hover:text-gray-900 hover:bg-white/50"
+          className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Courses
         </Button>
-      <div className="w-full  shadow-sm">
-        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-            Discover Your Next Course
-          </h1>
-          <p className="mt-2 text-center text-gray-600 max-w-2xl mx-auto">
+        <div className="my-8 text-center">
+          <h1 className="text-4xl font-bold text-gray-900">Discover Your Next Course</h1>
+          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
             Explore our collection of expert-led courses to advance your skills
           </p>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row gap-4 items-center  p-4 rounded-lg shadow-sm">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Search courses..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white border-gray-200 focus:ring-violet-500 focus:border-violet-500 w-full"
-            />
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search courses..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-gray-100 border-gray-200 focus:ring-blue-500 focus:border-blue-500 w-full"
+              />
+            </div>
+            <Select onValueChange={setSortBy} value={sortBy}>
+              <SelectTrigger className="w-[180px] bg-gray-100 border-gray-200">
+                <SelectValue placeholder="Sort by" />
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="title">Course Name</SelectItem>
+                <SelectItem value="price">Price</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Select onValueChange={setSortBy} value={sortBy}>
-            <SelectTrigger className="w-[180px] bg-white border-gray-200">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="title">Course Name</SelectItem>
-              <SelectItem value="price">Price</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-12">
           {filteredAndSortedCourses.map((course) => (
             <div key={course.id} className="group">
-              <Card className="h-full bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              <Card className="h-full bg-white overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                 <div className="relative aspect-video">
                   {course.thumbnailUrl ? (
                     <img
@@ -122,20 +118,19 @@ export default function CoursesPage() {
                   </div>
                 </div>
 
-                <CardHeader className="space-y-2">
+                <CardHeader className="space-y-2 p-4">
                   <CardTitle className="text-xl font-bold line-clamp-2 text-gray-900">
                     {course.title}
                   </CardTitle>
-                  
                 </CardHeader>
 
-                <CardFooter className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span className="text-lg font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                  ₹{course.price.toFixed(2)}
+                <CardFooter className="flex items-center justify-between pt-4 border-t border-gray-100 p-4">
+                  <span className="text-lg font-bold text-blue-600">
+                    ₹{course.price.toFixed(2)}
                   </span>
                   <Button
                     onClick={() => router.push(`/courses/${course.id}`)}
-                    className="bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:from-violet-700 hover:to-purple-700 transition-all duration-300"
+                    className="bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300"
                   >
                     View Details
                   </Button>
