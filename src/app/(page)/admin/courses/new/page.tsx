@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { toast } from '@/hooks/use-toast'
 
@@ -98,150 +98,158 @@ export default function CreateCoursePage() {
   }
 
   return (
-    <div className="container mx-auto py-10 mt-12">
-      <h1 className="text-3xl font-bold mb-8">Create New Course</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                Title
-              </label>
-              <Input id="title" {...register('title')} className="mt-1" />
-              {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
-            </div>
+    <div className="container mx-auto py-10 mt-12 bg-[#F6F9FC] text-[#334155]">
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold mb-2">Create New Course</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-[#475569]">
+                    Title
+                  </label>
+                  <Input id="title" {...register('title')} className="mt-1" />
+                  {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
+                </div>
 
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <ReactQuill theme="snow" value={field.value} onChange={field.onChange} />
-                )}
-              />
-              {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
-            </div>
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium text-[#475569]">
+                    Description
+                  </label>
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field }) => (
+                      <ReactQuill theme="snow" value={field.value} onChange={field.onChange} />
+                    )}
+                  />
+                  {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
+                </div>
 
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                Category
-              </label>
-              <Controller
-                name="category"
-                control={control}
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="AIAPGET">AIAPGET (M.D. , M.S.)</SelectItem>
-                      <SelectItem value="PSC">Ayurved PSC | UPSC(AMO)</SelectItem>
-                      <SelectItem value="Phd">Ayurved Ph.D</SelectItem>
-                      <SelectItem value="dams">BAMS</SelectItem>
-                      <SelectItem value="business">Business</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
-            </div>
+                <div>
+                  <label htmlFor="category" className="block text-sm font-medium text-[#475569]">
+                    Category
+                  </label>
+                  <Controller
+                    name="category"
+                    control={control}
+                    render={({ field }) => (
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="AIAPGET">AIAPGET (M.D. , M.S.)</SelectItem>
+                          <SelectItem value="PSC">Ayurved PSC | UPSC(AMO)</SelectItem>
+                          <SelectItem value="Phd">Ayurved Ph.D</SelectItem>
+                          <SelectItem value="dams">BAMS</SelectItem>
+                          <SelectItem value="study material">Study Material</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
+                </div>
 
-            <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                Price
-              </label>
-              <Input
-                id="price"
-                type="number"
-                {...register('price', { valueAsNumber: true })}
-                className="mt-1"
-              />
-              {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price.message}</p>}
-            </div>
+                <div>
+                  <label htmlFor="price" className="block text-sm font-medium text-[#475569]">
+                    Price
+                  </label>
+                  <Input
+                    id="price"
+                    type="number"
+                    {...register('price', { valueAsNumber: true })}
+                    className="mt-1"
+                  />
+                  {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price.message}</p>}
+                </div>
 
-          </div>
+              </div>
 
-          <div className="space-y-6">
-          <div>
-  <label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700">
+              <div className="space-y-6">
+              <div>
+  <label htmlFor="thumbnail" className="block text-sm font-medium text-[#475569]">
     Thumbnail
   </label>
   <input
   type="file"
   id="thumbnail"
   {...register('thumbnail', { required: 'Thumbnail is required' })}
-  className="mt-1 block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
+  className="mt-1 block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none focus:ring-0 focus:border-[#0EA5E9]"
 />
-{errors.thumbnail && <p className="mt-1 text-sm text-red-600">thumbnail error</p>}
+{errors.thumbnail && <p className="mt-1 text-sm text-red-600">Thumbnail is required</p>}
 </div>
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Lessons
-                </label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => append({ title: '', content: ''})}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Lesson
-                </Button>
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="block text-sm font-medium text-[#475569]">
+                      Lessons
+                    </label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => append({ title: '', content: ''})}
+                      className="bg-[#0EA5E9] text-white hover:bg-[#0c87c0] focus:ring-[#0EA5E9]"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Lesson
+                    </Button>
+                  </div>
+                  
+                  {fields.map((field, index) => (
+                    <Card key={field.id} className="mb-4 shadow-md">
+                      <CardContent className="pt-6">
+                        <div className="space-y-4">
+                          <div className="flex justify-between">
+                            <Input
+                              placeholder="Lesson title"
+                              {...register(`lessons.${index}.title`)}
+                              className="focus:ring-[#0EA5E9] focus:border-[#0EA5E9]"
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => remove(index)}
+                              className="ml-2 text-[#475569] hover:text-red-600"
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          
+                          <Controller
+                            name={`lessons.${index}.content`}
+                            control={control}
+                            render={({ field }) => (
+                              <ReactQuill theme="snow" value={field.value} onChange={field.onChange} />
+                            )}
+                          />
+                          
+                         
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {errors.lessons && <p className="mt-1 text-sm text-red-600">Please add at least one lesson</p>}
+                </div>
               </div>
-              
-              {fields.map((field, index) => (
-                <Card key={field.id} className="mb-4">
-                  <CardContent className="pt-6">
-                    <div className="space-y-4">
-                      <div className="flex justify-between">
-                        <Input
-                          placeholder="Lesson title"
-                          {...register(`lessons.${index}.title`)}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => remove(index)}
-                          className="ml-2"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      
-                      <Controller
-                        name={`lessons.${index}.content`}
-                        control={control}
-                        render={({ field }) => (
-                          <ReactQuill theme="snow" value={field.value} onChange={field.onChange} />
-                        )}
-                      />
-                      
-                     
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              {errors.lessons && <p className="mt-1 text-sm text-red-600">Please add at least one lesson</p>}
             </div>
-          </div>
-        </div>
 
-        <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline" onClick={() => router.push('/admin/courses')}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Course
-          </Button>
-        </div>
-      </form>
+            <div className="flex justify-end space-x-4">
+              <Button type="button" variant="outline" onClick={() => router.push('/admin/courses')} className="bg-gray-100 hover:bg-gray-200 focus:ring-[#0EA5E9]">
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="bg-[#0EA5E9] text-white hover:bg-[#0c87c0] focus:ring-[#0EA5E9]">
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create Course
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }
