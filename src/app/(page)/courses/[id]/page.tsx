@@ -59,7 +59,7 @@ export default function RedesignedCourseDetailPage({ params }: { params: { id: s
   const totalLessons = course.lessons.length
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-10">
+    <div className="min-h-screen bg-gray-50 pt-10 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Button 
           variant="ghost" 
