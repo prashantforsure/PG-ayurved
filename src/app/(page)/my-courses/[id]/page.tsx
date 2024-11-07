@@ -60,12 +60,12 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
 
   if (status === 'loading' || isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-violet-50 to-purple-50">
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
       <div className="animate-pulse flex space-x-4">
-        <div className="h-12 w-12 rounded-full bg-violet-200"></div>
+        <div className="h-12 w-12 rounded-full bg-gray-200"></div>
         <div className="space-y-3">
-          <div className="h-4 w-24 bg-violet-200 rounded"></div>
-          <div className="h-4 w-36 bg-violet-200 rounded"></div>
+          <div className="h-4 w-24 bg-gray-200 rounded"></div>
+          <div className="h-4 w-36 bg-gray-200 rounded"></div>
         </div>
       </div>
     </div>
@@ -77,7 +77,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8 mt-12">
+    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8 mt-12">
       <div className="max-w-4xl mx-auto">
         <Card className="mb-8 overflow-hidden">
           <div className="relative w-full pt-[56.25%]">
