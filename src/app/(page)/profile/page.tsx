@@ -94,7 +94,7 @@ export default function ProfilePage() {
 
 function ProfileSkeleton() {
   return (
-    <div className="container mx-auto py-10 px-4">
+    <div className="container mx-auto py-10 px-4 mt-12">
       <Card className="max-w-3xl mx-auto">
         <CardHeader className="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6">
           <Skeleton className="w-24 h-24 rounded-full" />
