@@ -187,12 +187,50 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-x-6">
         <Button
           onClick={() => router.push('/admin/courses')}
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
         >
           Manage Courses
+        </Button>
+
+        <Button
+          onClick={() => router.push('/admin/users')}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
+        >
+          Users
+        </Button>
+        <Button
+          onClick={() => router.push('/admin/courses')}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
+        >
+          courses
+        </Button>
+        <Button
+          onClick={() => router.push('/admin/categories')}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
+        >
+          Categories
+        </Button>
+        <Button
+          onClick={() => router.push('/admin/enrollments')}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
+        >
+         Enrollments
+        </Button>
+        <Button
+          onClick={() => router.push('/admin/reports')}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
+        >
+          Reports
+        </Button>
+
+        <Button
+          onClick={() => router.push('/admin/payments')}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
+        >
+          Payments
         </Button>
       </div>
     </div>
